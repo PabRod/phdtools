@@ -15,9 +15,5 @@ install:
 script:
     - pytest --cov
 
-#env:
-#  - CODECOV_TOKEN=443f343b-6903-45b3-942f-2f9fe03c674d
-#
-
 after_success:
  - codecov
