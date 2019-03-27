@@ -1,0 +1,23 @@
+language: python
+
+notifications:
+  email: false
+
+os:
+  - linux
+
+python:
+  - "3.6"
+
+install:
+  - pip install -r requirements.txt
+
+script:
+    - pytest --cov=tests/
+
+#env:
+#  - CODECOV_TOKEN=443f343b-6903-45b3-942f-2f9fe03c674d
+#
+
+after_success:
+ - codecov
