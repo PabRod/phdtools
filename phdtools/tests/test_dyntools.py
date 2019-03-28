@@ -1,4 +1,4 @@
-from ..tools.dyntools import *
+from tools.dyntools import *
 import pytest
 import numpy as np
 
