@@ -5,8 +5,6 @@ notifications:
 
 os:
   - linux
-  - windows
-  - osx
 
 python:
   - "2.7"
