@@ -1,4 +1,4 @@
-from tools.models import *
+from ..tools.models import *
 import pytest
 import numpy as np
 
