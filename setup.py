@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Learn more: https://github.com/PabRod/toypy
+# Learn more: https://github.com/PabRod/phdtools
 
 from setuptools import setup, find_packages
 
