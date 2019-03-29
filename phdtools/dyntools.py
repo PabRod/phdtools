@@ -19,7 +19,7 @@ class Detflow:
     def __init__(self, f):
         self.f = f
 
-    def plotPhase(self, roiX, roiY, **kwargs):
+    def plotPhase(self, roiX, roiY, print = False, **kwargs):
         """ Plot the phase plane """
         ax = plt.gca()
         X, Y = np.meshgrid(roiX, roiY)
@@ -28,4 +28,8 @@ class Detflow:
         ax.streamplot(X, Y, U, V, **kwargs)
         ax.set_xlim(roiX[0], roiX[-1])
         ax.set_ylim(roiY[0], roiY[-1])
-        plt.show()
+
+        if print:
+            plt.show()
+        else:
+            return plt
