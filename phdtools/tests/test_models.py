@@ -16,3 +16,16 @@ def test_decay(input, l, exp_output):
 
     assert(df == pytest.approx(exp_output, tol)), \
         'decay is not behaving as expected'
+
+
+@pytest.mark.parametrize("input, exp_output, a, b, c, d", [
+    ((1, 1), (0, 0), 1, 1, 1, 1)
+])
+def test_lotkavolterra(input, exp_output, a, b, c, d):
+
+    tol = 1e-8
+
+    df = lotkavolterra(input, 0, a, b, c, d)
+
+    assert(df == pytest.approx(exp_output, tol)), \
+        'lotkavolterra is not behaving as expected'

@@ -3,5 +3,7 @@
 *.vscode
 *coverage*
 *egg*
+*.idea*
+*dirty*
 /build
 /dist
