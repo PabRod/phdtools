@@ -27,3 +27,20 @@ def test_stabil(input, exp_output):
 
     assert(yStabil == pytest.approx(exp_output, tol)), \
         'stabil is not behaving as expected'
+
+def test_polarToCartesian():
+
+    def model_pol(pos, t=0):
+        r, th = pos
+
+        dydt = [-r,
+                1]
+        return dydt
+
+    model_cart = polarToCartesian(model_pol)
+
+    tol = 1e-3
+    input = (3, 4)
+    exp_output = (-7, -1)
+    assert(model_cart(input) == pytest.approx(exp_output, tol)), \
+        'polarToCartesian is failing'
