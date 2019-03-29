@@ -17,6 +17,20 @@ def test_decay(input, l, exp_output):
     assert(df == pytest.approx(exp_output, tol)), \
         'decay is not behaving as expected'
 
+@pytest.mark.parametrize("input, exp_output", [
+    (0,0),
+    (1,0),
+    (0.5, 0.375)
+])
+def test_ass(input, exp_output):
+
+    tol = 1e-8
+
+    df = ass(input)
+
+    assert(df == pytest.approx(exp_output, tol)), \
+        'ass is not behaving as expected'
+
 
 @pytest.mark.parametrize("input, exp_output, a, b, c, d", [
     ((1, 1), (0, 0), 1, 1, 1, 1)
