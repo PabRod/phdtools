@@ -50,33 +50,37 @@ def polarToCartesian(flow_in_polar):
 
         # This is just an ugly way to represent a matrix product
         # Written like this it is easier to vectorize
-        vx = m11*flow_pol_eval[0] + m12*flow_pol_eval[1]
-        vy = m21*flow_pol_eval[0] + m22*flow_pol_eval[1]
+        vx = m11 * flow_pol_eval[0] + m12 * flow_pol_eval[1]
+        vy = m21 * flow_pol_eval[0] + m22 * flow_pol_eval[1]
         return [vx, vy]
 
     return flow_in_cartesian
+
 
 class Detflow:
     """ Deterministic flow """
 
     def __init__(self, f):
         """ Constructor """
-        self.f=f
+        self.f = f
 
-    def plotPhase(self, roiX, roiY, print=False, **kwargs):
+    def jac(self, y, step=1e-6):
+        """ Numeric jacobian """
+        step_matrix = step * np.eye(2)
+
+        return 0
+
+    def plotPhase(self, roiX, roiY, **kwargs):
         """ Plot the phase plane """
-        ax=plt.gca()
-        X, Y=np.meshgrid(roiX, roiY)
-        [U, V]=self.f((X, Y), 0)
+        ax = plt.gca()
+        X, Y = np.meshgrid(roiX, roiY)
+        [U, V] = self.f((X, Y), 0)
 
         ax.streamplot(X, Y, U, V, **kwargs)
         ax.set_xlim(roiX[0], roiX[-1])
         ax.set_ylim(roiY[0], roiY[-1])
 
-        if print:
-            plt.show()
-        else:
-            return plt
+        return plt
 
 
 class Trajectory(Detflow):
