@@ -78,6 +78,18 @@ class Detflow:
 
         return plt
 
+    def jac(self, y, step=1e-6):
+        """ Numeric jacobian """
+
+        N = self.dims
+        J = np.empty((N, N))
+        step_matrix = step * np.eye(N)
+
+        for i in range(N):
+            J[:, i] = (np.asarray(self.f(y + step_matrix[:, i])) - np.asarray(self.f(y)))/step
+
+        return J
+
 
 class Trajectory(Detflow):
 
