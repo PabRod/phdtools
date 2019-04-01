@@ -60,15 +60,10 @@ def polarToCartesian(flow_in_polar):
 class Detflow:
     """ Deterministic flow """
 
-    def __init__(self, f):
+    def __init__(self, f, dims):
         """ Constructor """
         self.f = f
-
-    def jac(self, y, step=1e-6):
-        """ Numeric jacobian """
-        step_matrix = step * np.eye(2)
-
-        return 0
+        self.dims = dims
 
     def plotPhase(self, roiX, roiY, **kwargs):
         """ Plot the phase plane """
@@ -90,12 +85,11 @@ class Trajectory(Detflow):
         """ Constructor """
 
         # Invoke the __init__ of the parent class
-        Detflow.__init__(self, f)
+        Detflow.__init__(self, f, len(y0))
 
         self.y0 = y0  # Set initial conditions
         self.ts = ts  # Set time span
 
-        self.dims = len(y0)
         self.sol = []
 
     def solve(self, **kwargs):
