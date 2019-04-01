@@ -77,3 +77,54 @@ class Detflow:
             plt.show()
         else:
             return plt
+
+
+class Trajectory(Detflow):
+
+    def __init__(self, f, y0, ts):
+        """ Constructor """
+
+        # Invoke the __init__ of the parent class
+        Detflow.__init__(self, f)
+
+        self.y0 = y0  # Set initial conditions
+        self.ts = ts  # Set time span
+
+        self.dims = len(y0)
+        self.sol = []
+
+    def solve(self, **kwargs):
+        """ Solves initial value problem """
+
+        if (self.sol == []):
+            # Solve only if not already solved
+            self.sol = odeint(self.f, self.y0, self.ts, **kwargs)
+        else:
+            # Do nothing
+            pass
+
+    def ploty0(self, **kwargs):
+        """ Plots the initial state"""
+
+        if(self.dims == 2):
+            plt.scatter(self.y0[0], self.y0[1], **kwargs)
+            return plt
+        else:
+            # Throw exception
+            pass
+
+    def plotTimeseries(self, **kwargs):
+        """ Plots the time series """
+
+        self.solve()
+
+        plt.plot(self.ts, self.sol, **kwargs)
+        return plt
+
+    def plotTrajectory(self, print=False, **kwargs):
+        """ Plots the trajectory in the phase plane """
+
+        self.solve()
+
+        plt.plot(self.sol[:, 0], self.sol[:, 1], **kwargs)
+        return plt
