@@ -40,9 +40,9 @@ def test_plotTimeseries():
 
 def test_ploty0():
 
-    from phdtools.models import lotkavolterra
+    from phdtools.models import lotkavolterra, decay
 
-    # Construct the flow
+    # Construct a 2D flow
     y0 = [0.5, 0.6]
     ts = np.linspace(0, 10, 100)
     traj = Trajectory(lotkavolterra, y0, ts)
@@ -50,11 +50,21 @@ def test_ploty0():
     # Plot a phase
     plt = traj.ploty0()
 
+    # Construct a 1D flow
+    y0 = [0.5]
+    ts = np.linspace(0, 10, 100)
+    traj = Trajectory(decay, y0, ts)
+
+    # Plot a phase
+    with pytest.raises(ValueError) as excinfo:
+        plt = traj.ploty0()
+    assert 'Only available for 2 dimensions' in str(excinfo.value)
+
 def test_plotTrajectory():
 
-    from phdtools.models import lotkavolterra
+    from phdtools.models import lotkavolterra, decay
 
-    # Construct the flow
+    # Construct a 2D flow
     y0 = [0.5, 0.6]
     ts = np.linspace(0, 10, 100)
     traj = Trajectory(lotkavolterra, y0, ts)
@@ -63,3 +73,15 @@ def test_plotTrajectory():
 
     # Plot a phase
     traj.plotTrajectory()
+
+    # Construct a 1D flow
+    y0 = [0.5]
+    ts = np.linspace(0, 10, 100)
+    traj = Trajectory(decay, y0, ts)
+    roiX = np.linspace(0, 3, 10)
+    roiY = np.linspace(0, 5, 20)
+
+    # Plot a phase
+    with pytest.raises(ValueError) as excinfo:
+        traj.plotTrajectory()
+    assert 'Only available for 2 dimensions' in str(excinfo.value)

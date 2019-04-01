@@ -72,6 +72,7 @@ class Detflow:
 
     def plotPhase(self, roiX, roiY, **kwargs):
         """ Plot the phase plane """
+
         ax = plt.gca()
         X, Y = np.meshgrid(roiX, roiY)
         [U, V] = self.f((X, Y), 0)
@@ -115,7 +116,7 @@ class Trajectory(Detflow):
             return plt
         else:
             # Throw exception
-            pass
+            raise ValueError('Only available for 2 dimensions')
 
     def plotTimeseries(self, **kwargs):
         """ Plots the time series """
@@ -130,5 +131,9 @@ class Trajectory(Detflow):
 
         self.solve()
 
-        plt.plot(self.sol[:, 0], self.sol[:, 1], **kwargs)
-        return plt
+        if(self.dims == 2):
+            plt.plot(self.sol[:, 0], self.sol[:, 1], **kwargs)
+            return plt
+        else:
+            # Throw exception
+            raise ValueError('Only available for 2 dimensions')
