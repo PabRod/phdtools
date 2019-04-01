@@ -60,7 +60,7 @@ def test_plotMaxLyapunov():
     ts = np.linspace(0, 10, 100)
     traj = Trajectory(lotkavolterra, y0, ts)
 
-    # Plot a phase
+    # Plot
     plt = traj.plotMaxLyapunov()
 
 def test_ploty0():
@@ -72,7 +72,7 @@ def test_ploty0():
     ts = np.linspace(0, 10, 100)
     traj = Trajectory(lotkavolterra, y0, ts)
 
-    # Plot a phase
+    # Plot the initial condition
     plt = traj.ploty0()
 
     # Construct a 1D flow
@@ -80,7 +80,7 @@ def test_ploty0():
     ts = np.linspace(0, 10, 100)
     traj = Trajectory(decay, y0, ts)
 
-    # Plot a phase
+    # Try to plot. Should fail
     with pytest.raises(ValueError) as excinfo:
         plt = traj.ploty0()
     assert 'Only available for 2 dimensions' in str(excinfo.value)
@@ -96,7 +96,7 @@ def test_plotTrajectory():
     roiX = np.linspace(0, 3, 10)
     roiY = np.linspace(0, 5, 20)
 
-    # Plot a phase
+    # Plot a the trajectory in the phase plane
     traj.plotTrajectory()
 
     # Construct a 1D flow
@@ -106,7 +106,7 @@ def test_plotTrajectory():
     roiX = np.linspace(0, 3, 10)
     roiY = np.linspace(0, 5, 20)
 
-    # Plot a phase
+    # Try to plot. Should fail
     with pytest.raises(ValueError) as excinfo:
         traj.plotTrajectory()
     assert 'Only available for 2 dimensions' in str(excinfo.value)
