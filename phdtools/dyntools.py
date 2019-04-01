@@ -129,6 +129,20 @@ class Trajectory(Detflow):
             # Do nothing
             pass
 
+    def maxlyapunov(self, step=1e-6):
+        """ Gets the maximum lyapunov for each time step"""
+
+        self.solve()
+
+        ntimes = len(self.ts)
+        ml = np.empty(ntimes)
+        i = 0
+        for i in range(ntimes):
+            ml[i] = Detflow.maxlyapunov(self, self.sol[i, :], step)
+            i =+ 1
+
+        return ml
+
     def ploty0(self, **kwargs):
         """ Plots the initial state"""
 
@@ -145,6 +159,14 @@ class Trajectory(Detflow):
         self.solve()
 
         plt.plot(self.ts, self.sol, **kwargs)
+        return plt
+
+    def plotMaxLyapunov(self, **kwargs):
+        """ Plots the time series of the maximum Lyapunovs"""
+
+        self.solve()
+
+        plt.plot(self.ts, self.maxlyapunov(), **kwargs)
         return plt
 
     def plotTrajectory(self, print=False, **kwargs):

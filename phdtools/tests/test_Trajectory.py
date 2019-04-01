@@ -24,7 +24,20 @@ def test_solve():
     ylast = sol[-1,:]
 
     tol = 1e-2
-    assert(np.abs(ylast[0]) < tol)
+    assert(np.abs(ylast[0]) < tol) # Expected 0.0
+
+def test_maxLyapunov():
+
+    from phdtools.models import decay
+
+    y0 = [1]
+    ts = np.linspace(0, 100, 100)
+
+    traj = Trajectory(decay, y0, ts)
+    ms = traj.maxlyapunov()
+
+    tol = 1e-6
+    assert(ms[-1] == pytest.approx(-1.0, tol))
 
 def test_plotTimeseries():
 
@@ -37,6 +50,18 @@ def test_plotTimeseries():
 
     # Plot a phase
     plt = traj.plotTimeseries()
+
+def test_plotMaxLyapunov():
+
+    from phdtools.models import lotkavolterra
+
+    # Construct the flow
+    y0 = [0.5, 0.6]
+    ts = np.linspace(0, 10, 100)
+    traj = Trajectory(lotkavolterra, y0, ts)
+
+    # Plot a phase
+    plt = traj.plotMaxLyapunov()
 
 def test_ploty0():
 
