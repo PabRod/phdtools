@@ -65,19 +65,6 @@ class Detflow:
         self.f = f
         self.dims = dims
 
-    def plotPhase(self, roiX, roiY, **kwargs):
-        """ Plot the phase plane """
-
-        ax = plt.gca()
-        X, Y = np.meshgrid(roiX, roiY)
-        [U, V] = self.f((X, Y), 0)
-
-        ax.streamplot(X, Y, U, V, **kwargs)
-        ax.set_xlim(roiX[0], roiX[-1])
-        ax.set_ylim(roiY[0], roiY[-1])
-
-        return plt
-
     def jac(self, y, step=1e-6):
         """ Numeric jacobian """
 
@@ -90,6 +77,26 @@ class Detflow:
 
         return J
 
+    def lyapunovs(self, y, step=1e-6):
+        """ Numeric lyapunov exponents """
+
+        J = self.jac(y, step)
+        lyaps = np.linalg.eigvals(J)
+
+        return lyaps
+
+    def plotPhase(self, roiX, roiY, **kwargs):
+        """ Plot the phase plane """
+
+        ax = plt.gca()
+        X, Y = np.meshgrid(roiX, roiY)
+        [U, V] = self.f((X, Y), 0)
+
+        ax.streamplot(X, Y, U, V, **kwargs)
+        ax.set_xlim(roiX[0], roiX[-1])
+        ax.set_ylim(roiY[0], roiY[-1])
+
+        return plt
 
 class Trajectory(Detflow):
 

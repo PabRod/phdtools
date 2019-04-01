@@ -27,6 +27,24 @@ def test_jacobian():
     tol = 1e-6
     assert(J == pytest.approx(J_expected, tol))
 
+def test_lyapunov():
+
+    def fun(r, t = 0):
+
+        x,y = r
+        dydt = [1*x + 0*y,
+                0*x + 2*y]
+        return dydt
+
+    traj = Detflow(fun, 2)
+    y0 = [0, 0]
+
+    lyaps = traj.lyapunovs(y0)
+    lyaps_expected = np.array([1, 2])
+
+    tol = 1e-6
+    assert(lyaps == pytest.approx(lyaps_expected, tol))
+
 
 def test_phase():
 
