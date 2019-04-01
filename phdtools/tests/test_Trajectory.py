@@ -62,4 +62,4 @@ def test_plotTrajectory():
     roiY = np.linspace(0, 5, 20)
 
     # Plot a phase
-    traj.plotPhase(roiX, roiY, color = "black", linewidth = 1, density = 1.5)
+    traj.plotTrajectory()
