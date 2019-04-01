@@ -42,9 +42,12 @@ def test_lyapunov():
     lyaps = traj.lyapunovs(y0)
     lyaps_expected = np.array([1, 2])
 
+    lyap_max = traj.maxlyapunov(y0)
+    lyap_max_expected = 2
+
     tol = 1e-6
     assert(lyaps == pytest.approx(lyaps_expected, tol))
-
+    assert(lyap_max == pytest.approx(lyap_max_expected, tol))
 
 def test_phase():
 

@@ -85,6 +85,14 @@ class Detflow:
 
         return lyaps
 
+    def maxlyapunov(self, y, step=1e-6):
+        """ Numeric maximum lyapunov """
+
+        lyaps = self.lyapunovs(y, step)
+        lyaps_real_parts = np.real(lyaps)
+
+        return np.max(lyaps_real_parts)
+
     def plotPhase(self, roiX, roiY, **kwargs):
         """ Plot the phase plane """
 
