@@ -64,7 +64,8 @@ class Detflow:
         """ Constructor """
         self.f = f
         self.dims = dims
-        self.eqs = set()
+        self.eqs = []
+        self.eqs_classes = []
 
     def jac(self, y, step=1e-6):
         """ Numeric jacobian """
@@ -84,13 +85,19 @@ class Detflow:
         from scipy.optimize import fsolve
 
         eq =  fsolve(self.f, y_guess)
+        eq_class = self.claseq(eq)
+        
+        if list(eq) in self.eqs:
+            # Do nothing
+            pass
+        else:
+            # Append found equilibrium to list
+            self.eqs.append(list(eq))
 
-        # Append found equilibrium to list
-        eqs = self.eqs
-        eqs.add(tuple(eq))
-        self.eqs = eqs
+            # Append class of equilibrium
+            self.eqs_classes.append(eq_class)
 
-        return eq
+        return eq, eq_class
 
     def claseq(self, eq, step=1e-6):
         """ Classifies the equilibrium point """
@@ -101,7 +108,7 @@ class Detflow:
         elif ml > 0:
             return "unstable"
         else:
-            return "center" 
+            return "center"
 
     def lyapunovs(self, y, step=1e-6):
         """ Numeric lyapunov exponents """

@@ -12,14 +12,22 @@ def test_findeq():
 
     from phdtools.models import lotkavolterra
 
+    # Test 1: find and classify equilibrium points
     flow = Detflow(lotkavolterra, 2)
     flow.findeq((1.5, 1.3))
     flow.findeq((0.1, 0.1))
 
-    eqs_set = flow.eqs
+    eqs = flow.eqs
+    eqs_class = flow.eqs_classes
+    assert(eqs[0] == [1, 1]), "Equilibrium not found"
+    assert(eqs_class[0] == "center"), "Equilibrium wrongly classified"
+    assert(eqs[1] == [0, 0]), "Equilibrium not found"
+    assert(eqs_class[1] == "unstable"), "Equilibrium wrongly classified"
 
-    assert((0, 0) in eqs_set)
-    assert((1, 1) in eqs_set)
+    # Test 2: only append if not already in list
+    flow.findeq((0.2, 0.2))
+    assert(len(flow.eqs) == 2), "Repeated equilibria in list"
+    assert(len(flow.eqs_classes) == 2), "Repeated equilibria in list"
 
 def test_claseq():
 
