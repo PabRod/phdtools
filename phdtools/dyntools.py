@@ -64,6 +64,7 @@ class Detflow:
         """ Constructor """
         self.f = f
         self.dims = dims
+        self.eqs = set()
 
     def jac(self, y, step=1e-6):
         """ Numeric jacobian """
@@ -76,6 +77,21 @@ class Detflow:
             J[:, i] = (np.asarray(self.f(y + step_matrix[:, i])) - np.asarray(self.f(y)))/step
 
         return J
+
+    def findeq(self, y_guess):
+        """ Searches for equilibria """
+
+        from scipy.optimize import fsolve
+        import math
+
+        eq =  fsolve(self.f, y_guess)
+
+        # Append found equilibrium to list
+        eqs = self.eqs
+        eqs.add(tuple(eq))
+        self.eqs = eqs
+
+        return eq
 
     def lyapunovs(self, y, step=1e-6):
         """ Numeric lyapunov exponents """

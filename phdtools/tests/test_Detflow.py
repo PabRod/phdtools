@@ -8,6 +8,18 @@ def test_constructor():
     from phdtools.models import decay
     flow = Detflow(decay, 1)
 
+def test_findeq():
+
+    from phdtools.models import lotkavolterra
+
+    flow = Detflow(lotkavolterra, 2)
+    flow.findeq((1.5, 1.3))
+    flow.findeq((0.1, 0.1))
+
+    eqs_set = flow.eqs
+
+    assert((0, 0) in eqs_set)
+    assert((1, 1) in eqs_set)
 
 def test_jacobian():
 
