@@ -82,7 +82,6 @@ class Detflow:
         """ Searches for equilibria """
 
         from scipy.optimize import fsolve
-        import math
 
         eq =  fsolve(self.f, y_guess)
 

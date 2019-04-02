@@ -3,4 +3,3 @@ scipy
 pytest-cov
 codecov
 matplotlib
-math
