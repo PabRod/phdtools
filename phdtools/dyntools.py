@@ -92,6 +92,17 @@ class Detflow:
 
         return eq
 
+    def claseq(self, eq, step=1e-6):
+        """ Classifies the equilibrium point """
+
+        ml = self.maxlyapunov(eq, step)
+        if ml < 0.0:
+            return "stable"
+        elif ml > 0:
+            return "unstable"
+        else:
+            return "center" 
+
     def lyapunovs(self, y, step=1e-6):
         """ Numeric lyapunov exponents """
 

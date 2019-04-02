@@ -21,6 +21,16 @@ def test_findeq():
     assert((0, 0) in eqs_set)
     assert((1, 1) in eqs_set)
 
+def test_claseq():
+
+    from phdtools.models import lotkavolterra
+
+    flow = Detflow(lotkavolterra, 2)
+    eqs_types = (flow.claseq((0,0)), flow.claseq((1,1)))
+    exp_types = ("unstable", "center")
+
+    assert(eqs_types == exp_types)
+
 def test_jacobian():
 
     def fun(r, t = 0):
