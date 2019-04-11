@@ -27,7 +27,7 @@ def polarToCartesian(flow_in_polar):
 
     def transform(x, y):
         """ Transformation matrix """
-        # TODO a more elegant way would be factorizing this
+        # TODO: a more elegant way would be factorizing this
         # m = np.matrix([[x / r(x, y), -y],
         #                [y / r(x, y), x]])
         #
@@ -143,8 +143,20 @@ class Detflow:
         """ Plot the equilibria"""
 
         ax = plt.gca()
-        for eq in self.eqs:
-            ax.scatter(eq[0], eq[1], **kwargs)
+        for i in range(len(self.eqs)):
+            # Unpack each found equilibria
+            eq = self.eqs[i]
+            st = self.eqs_classes[i]
+
+            # Color according to its type
+            if (st == 'stable'):
+                ax.scatter(eq[0], eq[1], color = 'black', **kwargs)
+            elif (st == 'unstable'):
+                ax.scatter(eq[0], eq[1], color = 'white', edgecolors = 'black', **kwargs)
+            elif (st == 'center'):
+                ax.scatter(eq[0], eq[1], color = 'grey', edgecolors = 'black', **kwargs)
+            else:
+                raise ValueError('An unexpected equilibrium type was declared')
 
         return plt
 
