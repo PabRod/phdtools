@@ -39,6 +39,17 @@ def test_claseq():
 
     assert(eqs_types == exp_types)
 
+def test_plotEqs():
+
+    from phdtools.models import lotkavolterra
+
+    flow = Detflow(lotkavolterra, 2)
+    flow.findeq((1.5, 1.3))
+    flow.findeq((0.1, 0.1))
+
+    plt = flow.plotEqs()
+
+
 def test_jacobian():
 
     def fun(r, t = 0):

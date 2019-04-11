@@ -86,7 +86,7 @@ class Detflow:
 
         eq =  fsolve(self.f, y_guess)
         eq_class = self.claseq(eq)
-        
+
         if list(eq) in self.eqs:
             # Do nothing
             pass
@@ -136,6 +136,15 @@ class Detflow:
         ax.streamplot(X, Y, U, V, **kwargs)
         ax.set_xlim(roiX[0], roiX[-1])
         ax.set_ylim(roiY[0], roiY[-1])
+
+        return plt
+
+    def plotEqs(self, **kwargs):
+        """ Plot the equilibria"""
+
+        ax = plt.gca()
+        for eq in self.eqs:
+            ax.scatter(eq[0], eq[1], **kwargs)
 
         return plt
 
