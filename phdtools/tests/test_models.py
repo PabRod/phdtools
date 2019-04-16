@@ -43,3 +43,18 @@ def test_lotkavolterra(input, exp_output, a, b, c, d):
 
     assert(df == pytest.approx(exp_output, tol)), \
         'lotkavolterra is not behaving as expected'
+
+@pytest.mark.parametrize("input, exp_output", [
+    ((0, 0), (0, 0)),
+    ((10, 0), (0, 0)),
+    ((3.333333333333294, 4.444444444444456), (0, 0)),
+    ((1, 1), (19/60, -7/100))
+])
+def test_rosmac(input, exp_output):
+
+    tol = 1e-8
+
+    df = rosmac(input)
+
+    assert(df == pytest.approx(exp_output, tol)), \
+        'rosmac is not behaving as expected'
