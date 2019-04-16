@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 
-def stabil(model, y0, tstabil, *args):
+def stabil(model, y0, tstabil, **kwargs):
     """(Try to) stabilize a dynamical system
     """
-    ys = odeint(model, y0, tstabil, *args)
+    ys = odeint(model, y0, tstabil, **kwargs)
     ylast = ys[-1, :]
 
     return ylast
@@ -109,6 +109,14 @@ class Detflow:
             return "unstable"
         else:
             return "center"
+
+    def attractor(self, y0, tstabil, tattr, **kwargs):
+        """ Estimates the attractor integrating after stabilization
+        """
+        ylast = stabil(self.f, y0, tstabil)
+        yattr = odeint(self.f, ylast, tattr, **kwargs)
+
+        return yattr
 
     def lyapunovs(self, y, step=1e-6):
         """ Numeric lyapunov exponents """

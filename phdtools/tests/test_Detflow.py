@@ -39,6 +39,19 @@ def test_claseq():
 
     assert(eqs_types == exp_types)
 
+def test_attractor():
+
+    from phdtools.models import rosmac
+
+    flow = Detflow(rosmac, 2)
+    rattr = flow.attractor((4,4), (0, 200), np.linspace(0, 70, 70))
+    xattr, yattr = rattr[:, 0], rattr[:, 1]
+
+    assert(0.5 < np.min(xattr) < 1.5)
+    assert(7 < np.max(xattr) < 8)
+    assert(2 < np.min(yattr) < 2.5)
+    assert(5 < np.max(yattr) < 6)
+
 def test_plotEqs():
 
     from phdtools.models import lotkavolterra
