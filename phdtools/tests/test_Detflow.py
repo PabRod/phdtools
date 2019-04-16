@@ -45,8 +45,9 @@ def test_attractor():
 
     flow = Detflow(rosmac, 2)
     rattr = flow.attractor((4,4), (0, 200), np.linspace(0, 70, 70))
-    xattr, yattr = rattr[:, 0], rattr[:, 1]
 
+    xattr, yattr = rattr[:, 0], rattr[:, 1]
+    # Check approximate boundaries
     assert(0.5 < np.min(xattr) < 1.5)
     assert(7 < np.max(xattr) < 8)
     assert(2 < np.min(yattr) < 2.5)
