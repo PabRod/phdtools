@@ -2,8 +2,6 @@ import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-#from models import rosmac
-# from dyntools import Trajectory
 
 def measure(xt, **kwargs):
     """ Introduce measure noise
@@ -51,6 +49,8 @@ def plot_return(ax, Dt, k = 1, marker=".", **kwargs):
     ax.scatter(Vt, Vt_k, marker=marker, **kwargs)
     ax.set_xlabel('V_t')
     ax.set_ylabel('V_{t+k}')
+
+    return ax
 
 def plot_autocorrelation(ax, Dt, ks, marker=".", **kwargs):
     """ Plot several values of the autocorrelation

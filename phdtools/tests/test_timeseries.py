@@ -49,3 +49,27 @@ def test_autocorrelation(Dt, k, exp_output):
 
     tol = 1e-4
     assert(ac == pytest.approx(exp_output, tol))
+
+def test_plot_autocorrelation():
+
+    ts = range(0, 100)
+    Dt = np.sin(ts)
+    
+    fig, ax = plt.subplots(1,1)
+    ax = plot_autocorrelation(ax, Dt, range(0, 50))
+
+def test_plot_return():
+
+    ts = np.linspace(0, 20, 100)
+    Dt = np.sin(ts)
+    
+    fig, ax = plt.subplots(1,1)
+    ax = plot_return(ax, Dt, 2)
+
+def test_plot_approx_phas():
+
+    ts = np.linspace(0, 20, 100)
+    Dt = np.sin(ts)
+    
+    fig, ax = plt.subplots(1,1)
+    ax = plot_approx_phas(ax, Dt, ts)
