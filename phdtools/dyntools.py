@@ -189,7 +189,7 @@ class Trajectory(Detflow):
     def solve(self, **kwargs):
         """ Solves initial value problem """
 
-        if (self.sol == []):
+        if (len(self.sol) == 0):
             # Solve only if not already solved
             self.sol = odeint(self.f, self.y0, self.ts, **kwargs)
         else:
@@ -265,7 +265,7 @@ class stoTrajectory(Trajectory):
     def solve(self, **kwargs):
         """ Solves initial value problem """
 
-        if (self.sol == []):
+        if (len(self.sol) == 0):
             # Solve only if not already solved
             self.sol = sdeint.itoint(self.f, self.G, self.y0, self.ts, **kwargs)
         else:
