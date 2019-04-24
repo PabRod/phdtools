@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.integrate import odeint
+import sdeint
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -174,7 +175,11 @@ class Trajectory(Detflow):
         """ Constructor """
 
         # Invoke the __init__ of the parent class
-        Detflow.__init__(self, f, len(y0))
+        if (isinstance(y0, float) | isinstance(y0, int)):
+            ## Required for 1D systems, where y0 has no attribute len
+            Detflow.__init__(self, f, 1)
+        else:
+            Detflow.__init__(self, f, len(y0))
 
         self.y0 = y0  # Set initial conditions
         self.ts = ts  # Set time span
@@ -242,3 +247,27 @@ class Trajectory(Detflow):
         else:
             # Throw exception
             raise ValueError('Only available for 2 dimensions')
+
+class stoTrajectory(Trajectory):
+
+    def __init__(self, f, G, y0, ts):
+        """ Constructor """
+
+        # Invoke the __init__ of the parent class
+        Trajectory.__init__(self, f, y0, ts)
+
+        self.G = G # Set stochastic term
+        self.y0 = y0  # Set initial conditions
+        self.ts = ts  # Set time span
+
+        self.sol = []
+
+    def solve(self, **kwargs):
+        """ Solves initial value problem """
+
+        if (self.sol == []):
+            # Solve only if not already solved
+            self.sol = sdeint.itoint(self.f, self.G, self.y0, self.ts, **kwargs)
+        else:
+            # Do nothing
+            pass
