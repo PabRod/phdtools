@@ -3,3 +3,4 @@ scipy
 pytest-cov
 codecov
 matplotlib
+sdeint
