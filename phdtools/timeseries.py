@@ -26,8 +26,17 @@ def symm_subset(Vt, k):
 
     return Vt, Vt_k
 
-def autocorrelation(Dt, k=1):
-    """ Correlation coefficient
+def find_index(t, ts = []):
+    """ Links times with indices """
+    if len(ts) == 0:
+        i = t
+    else:
+        i = np.min(np.where((t <= ts)))
+
+    return i
+
+def __autocorrelation_discrete(Dt, k=1):
+    """ Correlation coefficient (discrete version)
     """
     if k == 0:
         rho = 1
@@ -38,6 +47,24 @@ def autocorrelation(Dt, k=1):
         rho = np.sum(Vt_k * Vt) / np.sum(Vt**2)
 
     return rho
+
+def autocorrelation(Dt, l, ts=[]):
+    """ Correlation coefficient
+
+    Parameters:
+
+    Dt (array): the timeseries data
+    l (double): the lag
+    ts (array): the reference times. If not provided, t is understood as index
+    """
+    if len(ts) == 0: # l understood as index
+        return __autocorrelation_discrete(Dt, l)
+    else: # l understood as time
+        ac = np.empty(len(ts))
+        for i in range(0, len(ts)):
+            ac[i] = __autocorrelation_discrete(Dt, i)
+
+        return np.interp(l, ts, ac)
 
 def plot_return(ax, Dt, k = 1, marker=".", **kwargs):
     """ Plots signal vs delayed signal
@@ -52,14 +79,13 @@ def plot_return(ax, Dt, k = 1, marker=".", **kwargs):
 
     return ax
 
-def plot_autocorrelation(ax, Dt, ks, marker=".", **kwargs):
+def plot_autocorrelation(ax, Dt, ls, ts=[], marker=".", **kwargs):
     """ Plot several values of the autocorrelation
     """
     ax.set_title('Autocorrelation vs. lag')
-    for k in ks:
-        ax.plot(k, autocorrelation(Dt, k), marker=marker, **kwargs)
-
-    ax.set_xlabel('k')
+    for l in ls:
+        ax.plot(l, autocorrelation(Dt, l, ts), marker=marker, **kwargs)
+        ax.set_xlabel('k')
 
     return ax
 

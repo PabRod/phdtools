@@ -20,5 +20,5 @@ setup(
     author_email='pablo.rodriguez.sanchez@gmail.com',
     url='https://github.com/PabRod/phdtools',
     license=license,
-    packages=find_packages(exclude=('tests', 'docs'))
+    packages=find_packages(exclude=('tests', 'docs', 'vignettes'))
 )
