@@ -8,6 +8,11 @@ def decay(y, t=0, l=1):
     dydt = -l * y
     return dydt
 
+def logistic(y, t=0, r=1, k=1):
+    """Logistic growth model
+    """
+    dydt = r*y*(1 - y/k)
+    return dydt
 
 def ass(y, t=0):
     """Basic model with two alternative stable states

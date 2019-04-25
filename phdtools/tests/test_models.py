@@ -17,6 +17,20 @@ def test_decay(input, l, exp_output):
     assert(df == pytest.approx(exp_output, tol)), \
         'decay is not behaving as expected'
 
+@pytest.mark.parametrize("input, r, k, exp_output", [
+    (0, 1, 1, 0),
+    (0, 2, 2, 0),
+    (2, 1, 2, 0)
+])
+def test_logistic(input, r, k, exp_output):
+
+    tol = 1e-8
+
+    df = logistic(input, 0, r, k)
+
+    assert(df == pytest.approx(exp_output, tol)), \
+        'logistic is not behaving as expected'
+
 @pytest.mark.parametrize("input, exp_output", [
     (0,0),
     (1,0),
