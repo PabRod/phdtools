@@ -250,7 +250,7 @@ class Trajectory(Detflow):
 
 class stoTrajectory(Trajectory):
 
-    def __init__(self, f, G, y0, ts):
+    def __init__(self, f, G, y0, ts, method = 'EuMa'):
         """ Constructor """
 
         # Invoke the __init__ of the parent class
@@ -260,6 +260,8 @@ class stoTrajectory(Trajectory):
         self.y0 = y0  # Set initial conditions
         self.ts = ts  # Set time span
 
+        self.method = method # Integration method
+
         self.sol = []
 
     def solve(self, **kwargs):
@@ -267,7 +269,22 @@ class stoTrajectory(Trajectory):
 
         if (len(self.sol) == 0):
             # Solve only if not already solved
-            self.sol = sdeint.itoint(self.f, self.G, self.y0, self.ts, **kwargs)
+            if(self.method == 'EuMa'):
+                x = np.empty((len(self.ts), self.dims))
+                x[0, :] = self.y0
+                for i in range(1, len(self.ts)):
+                    Dt = self.ts[i] - self.ts[i-1]
+                    DW = np.random.normal(loc = 0.0, scale = np.sqrt(Dt), size = (self.dims, 1)) - np.random.normal(loc = 0.0, scale = np.sqrt(Dt), size = (self.dims, 1))
+                    x[i,:] = x[i-1,:] \
+                           + self.f(x[i-1,:], self.ts[i-1])*Dt \
+                           + np.transpose(self.G(x[i-1,:], self.ts[i-1]).dot(DW))
+                self.sol = x
+
+            elif (self.method == 'Ito'):
+                self.sol = sdeint.itoint(self.f, self.G, self.y0, self.ts, **kwargs)
+
+            else:
+                raise ValueError('Only supported methods are EuMa and Ito')
         else:
             # Do nothing
             pass
