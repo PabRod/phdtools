@@ -39,7 +39,8 @@ def test_solve_1D(method):
 
 @pytest.mark.parametrize("method", [
     ('EuMa'),
-    ('Ito')
+    ('Ito'),
+    ('Strato')
 ])
 def test_solve_2D(method):
 
