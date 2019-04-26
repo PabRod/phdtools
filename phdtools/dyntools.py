@@ -283,6 +283,9 @@ class stoTrajectory(Trajectory):
             elif (self.method == 'Ito'):
                 self.sol = sdeint.itoint(self.f, self.G, self.y0, self.ts, **kwargs)
 
+            elif (self.method == 'Strato'):
+                self.sol = sdeint.stratint(self.f, self.G, self.y0, self.ts, **kwargs)
+
             else:
                 raise ValueError('Only supported methods are EuMa and Ito')
         else:
