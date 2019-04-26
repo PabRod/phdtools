@@ -63,3 +63,18 @@ def test_solve_2D(method):
 
     tol = 1e-1
     assert(np.max(np.abs(stot.sol[-1,:])) < tol)
+
+@pytest.mark.xfail(raises=ValueError)
+def test_fail():
+    a = 1.0
+    b = 0.2
+    ts = np.linspace(0.0, 5.0, 5001)
+    y0 = 0.1
+
+    def f(x, t=0):
+        return -(a + x*b**2)*(1 - x**2)
+
+    def g(x, t=0):
+        return b*(1 - x**2)
+
+    stot = stoTrajectory(f, g, y0, ts, 'unsupported_method')
