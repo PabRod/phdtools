@@ -274,7 +274,7 @@ class stoTrajectory(Trajectory):
                 x[0, :] = self.y0
                 for i in range(1, len(self.ts)):
                     Dt = self.ts[i] - self.ts[i-1]
-                    DW = np.random.normal(loc = 0.0, scale = np.sqrt(Dt), size = (self.dims, 1)) - np.random.normal(loc = 0.0, scale = np.sqrt(Dt), size = (self.dims, 1))
+                    DW = np.random.normal(loc = 0.0, scale = np.sqrt(Dt), size = (self.dims, 1))
                     x[i,:] = x[i-1,:] \
                            + self.f(x[i-1,:], self.ts[i-1])*Dt \
                            + np.transpose(self.G(x[i-1,:], self.ts[i-1]).dot(DW))
