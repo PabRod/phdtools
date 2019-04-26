@@ -6,7 +6,7 @@ from phdtools.dyntools import stoTrajectory
 def test_constructor():
 
     from phdtools.models import decay
-    
+
     def G(y, t=0):
         return y**2
 
@@ -14,7 +14,11 @@ def test_constructor():
     ts = np.linspace(0, 10, 100)
     stot = stoTrajectory(decay, G, y0, ts)
 
-def test_solve_1D():
+@pytest.mark.parametrize("method", [
+    ('EuMa'),
+    ('Ito')
+])
+def test_solve_1D(method):
 
     a = 1.0
     b = 0.2
@@ -27,13 +31,17 @@ def test_solve_1D():
     def g(x, t=0):
         return b*(1 - x**2)
 
-    stot = stoTrajectory(f, g, y0, ts)
+    stot = stoTrajectory(f, g, y0, ts, method)
     stot.solve()
 
     tol = 5e-1
     assert(stot.sol[-1] == pytest.approx(-1, tol))
 
-def test_solve_2D():
+@pytest.mark.parametrize("method", [
+    ('EuMa'),
+    ('Ito')
+])
+def test_solve_2D(method):
 
     A = np.array([[-0.5, -2.0],
               [ 2.0, -1.0]])
@@ -49,7 +57,7 @@ def test_solve_2D():
     def g(x, t=0):
         return B
 
-    stot = stoTrajectory(f, g, y0, ts)
+    stot = stoTrajectory(f, g, y0, ts, method)
     stot.solve()
 
     tol = 1e-1
