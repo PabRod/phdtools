@@ -31,6 +31,34 @@ def test_logistic(input, r, k, exp_output):
     assert(df == pytest.approx(exp_output, tol)), \
         'logistic is not behaving as expected'
 
+@pytest.mark.parametrize("y, r, a, exp_output", [
+    (0, 1, 1, 0),
+    (1, 1, 1, 0),
+    (0.5, 4, 1, 1)
+])
+def test_competition1D(y, r, a, exp_output):
+
+    tol = 1e-8
+
+    df = competition(y, r=r, a=a)
+
+    assert(df == pytest.approx(exp_output, tol)), \
+        'competition (1D) is not behaving as expected'
+
+@pytest.mark.parametrize("y, r, a, exp_output", [
+    ((0, 0), 1, np.array([[1, 0], [0, 1]]), (0, 0)),
+    ((0, 0), (1,2), np.array([[1, 0], [0, 1]]), (0, 0)),
+    ((0.5, 0.5), (1,2), np.array([[1, 0], [0, 1]]), (0.25, 0.5))
+])
+def test_competition2D(y, r, a, exp_output):
+
+    tol = 1e-8
+
+    df = competition(y, r=r, a=a)
+
+    assert(df == pytest.approx(exp_output, tol)), \
+        'competition (2D) is not behaving as expected'
+
 @pytest.mark.parametrize("input, exp_output", [
     (0,0),
     (1,0),

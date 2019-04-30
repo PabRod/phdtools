@@ -29,6 +29,15 @@ def lotkavolterra(y, t=0, a=1, b=1, c=1, d=1):
             c * pred * prey - d * pred]
     return dydt
 
+def competition(y, t=0, r = 1, a = 1):
+    """ Basic competition model
+    """
+    ry = np.multiply(r, y)
+    ay = np.dot(a, y)
+    dydt = np.multiply(ry, (1-ay))
+
+    return dydt
+
 def rosmac(y, t=0, r0=0.5, k=10, g0=0.4, h=2, l=0.15, e=0.6):
     """ Rosenzweig-MacArthur predator prey model
     """
@@ -82,3 +91,19 @@ def oscgen(state, t=0, amp=1, w=2*np.pi, g=1):
 
     oscgen_cart = polarToCartesian(oscgen_pol)
     return oscgen_cart(state)
+
+def reset_up(df, th_data, y0, ts, tinit):
+
+    nsteps = len(ts)
+    ys = np.zeros(nsteps)
+    ys[0] = y0
+    for i in range(1, nsteps):
+        if ts[i] > tinit:
+            if ys[i-1] < th_data[i-1]:
+                ys[i] = ys[i-1] + df(ys[i-1], ts[i-1])*(ts[i] - ts[i-1])
+            else:
+                ys[i] = 0.0
+        else:
+            ys[i] = ys[i-1]
+
+    return ys
