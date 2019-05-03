@@ -66,6 +66,18 @@ def autocorrelation(Dt, l, ts=[]):
 
         return np.interp(l, ts, ac)
 
+def std_window_discrete(Dt, width):
+    """ Standard deviation along window
+    """
+    N = len(Dt)
+    delta = int(np.floor(width/2))
+    s = np.empty(N)
+    s[:] = np.nan
+    for i in range(delta, N-delta):
+        s[i] = np.std(Dt[i-delta:i+delta])
+
+    return s
+
 def plot_return(ax, Dt, k = 1, marker=".", **kwargs):
     """ Plots signal vs delayed signal
     """

@@ -29,7 +29,7 @@ def lotkavolterra(y, t=0, a=1, b=1, c=1, d=1):
             c * pred * prey - d * pred]
     return dydt
 
-def competition(y, t=0, r = 1, a = 1):
+def competition(y, t=0, r=1, a=1):
     """ Basic competition model
     """
     ry = np.multiply(r, y)
