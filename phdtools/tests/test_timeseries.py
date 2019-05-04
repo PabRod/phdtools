@@ -51,11 +51,12 @@ def test_autocorrelation(Dt, k, exp_output):
     assert(ac == pytest.approx(exp_output, tol))
 
 @pytest.mark.parametrize("Dt, i, width, exp_output", [
-    ((1,2,3,4,5), 3, 2, (2,3))
+    ((1,2,3,4,5), 3, 2, (3,4))
 ])
 def test_window_discrete(Dt, i, width, exp_output):
 
     Dt_subsetted = window_discrete(Dt, i, width)
+    assert(len(Dt_subsetted) == width)
     assert(Dt_subsetted == exp_output)
 
 @pytest.mark.parametrize("Dt, i, width", [
@@ -66,6 +67,19 @@ def test_window_discrete_nan(Dt, i, width):
 
     Dt_subsetted = window_discrete(Dt, i, width)
     assert(np.isnan(Dt_subsetted))
+
+@pytest.mark.parametrize("Dt, width", [
+    ((1,1,1,1,1), 2)
+])
+def test_stdwindow_discrete(Dt, width):
+
+    s = std_window_discrete(Dt, width)
+    s_expected = np.array([np.nan, 0.0, 0.0, 0.0, 0.0])
+    for i in range(0, len(s)):
+        if i == 0:
+            assert(np.isnan(s[i]))
+        else:
+            assert(s[i] == s_expected[i])
 
 def test_plot_autocorrelation():
 

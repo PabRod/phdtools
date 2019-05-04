@@ -76,22 +76,20 @@ def window_discrete(Dt, i, width):
     width: window's width
     """
     delta = int(np.floor(width))
-    if (i < delta) | (i > len(Dt)):
+    if (i < delta-1) | (i > len(Dt)-1):
         # Return nan if out of boundaries
         return np.nan
     else:
-        return Dt[i-delta:i]
+        return Dt[i-delta+1:i+1]
 
 
 def std_window_discrete(Dt, width):
     """ Standard deviation along window
     """
     N = len(Dt)
-    delta = int(np.floor(width/2))
     s = np.empty(N)
-    s[:] = np.nan
-    for i in range(delta, N-delta):
-        s[i] = np.std(Dt[i-delta:i+delta])
+    for i in range(0, N):
+        s[i] = np.std(window_discrete(Dt, i, width))
 
     return s
 
