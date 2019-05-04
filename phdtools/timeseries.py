@@ -66,6 +66,23 @@ def autocorrelation(Dt, l, ts=[]):
 
         return np.interp(l, ts, ac)
 
+def window_discrete(Dt, i, width):
+    """ Sample timeseries along window
+
+    Arguments:
+
+    Dt: the time series
+    i: the index
+    width: window's width
+    """
+    delta = int(np.floor(width))
+    if (i < delta) | (i > len(Dt)):
+        # Return nan if out of boundaries
+        return np.nan
+    else:
+        return Dt[i-delta:i]
+
+
 def std_window_discrete(Dt, width):
     """ Standard deviation along window
     """

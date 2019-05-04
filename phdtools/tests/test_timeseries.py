@@ -50,11 +50,28 @@ def test_autocorrelation(Dt, k, exp_output):
     tol = 1e-4
     assert(ac == pytest.approx(exp_output, tol))
 
+@pytest.mark.parametrize("Dt, i, width, exp_output", [
+    ((1,2,3,4,5), 3, 2, (2,3))
+])
+def test_window_discrete(Dt, i, width, exp_output):
+
+    Dt_subsetted = window_discrete(Dt, i, width)
+    assert(Dt_subsetted == exp_output)
+
+@pytest.mark.parametrize("Dt, i, width", [
+    ((1,2,3,4,5), 1, 3), # Too wide
+    ((1,2,3,4,5), 10, 1) # Too a high index
+])
+def test_window_discrete_nan(Dt, i, width):
+
+    Dt_subsetted = window_discrete(Dt, i, width)
+    assert(np.isnan(Dt_subsetted))
+
 def test_plot_autocorrelation():
 
     ts = range(0, 100)
     Dt = np.sin(ts)
-    
+
     fig, ax = plt.subplots(1,1)
     ax = plot_autocorrelation(ax, Dt, range(0, 50))
 
@@ -62,7 +79,7 @@ def test_plot_return():
 
     ts = np.linspace(0, 20, 100)
     Dt = np.sin(ts)
-    
+
     fig, ax = plt.subplots(1,1)
     ax = plot_return(ax, Dt, 2)
 
@@ -70,6 +87,6 @@ def test_plot_approx_phas():
 
     ts = np.linspace(0, 20, 100)
     Dt = np.sin(ts)
-    
+
     fig, ax = plt.subplots(1,1)
     ax = plot_approx_phas(ax, Dt, ts)
