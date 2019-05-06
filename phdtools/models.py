@@ -29,6 +29,15 @@ def lotkavolterra(y, t=0, a=1, b=1, c=1, d=1):
             c * pred * prey - d * pred]
     return dydt
 
+def duffing(state, t, g=0.2, w=1.2, a=-1, b=1, d=0.3):
+    """ Duffing oscillator
+    Ref: https://en.wikipedia.org/wiki/Duffing_equation
+    """
+    x, v = state
+    dydt = [v,
+            -a*x - b*x**3 - d*v + g*np.cos(w*t)]
+    return dydt
+
 def competition(y, t=0, r=1, a=1):
     """ Basic competition model
     """

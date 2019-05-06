@@ -4,5 +4,13 @@
 *coverage*
 *egg*
 *.idea*
+
+*script_*
+*/scripts
+
+*.RData
+*.Rhistory
+*.html
+
 /build
 /dist
