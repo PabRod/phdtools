@@ -82,6 +82,15 @@ def window_discrete(Dt, i, width):
     else:
         return Dt[i-delta+1:i+1]
 
+def mean_window_discrete(Dt, width):
+    """ Mean along window
+    """
+    N = len(Dt)
+    s = np.empty(N)
+    for i in range(0, N):
+        s[i] = np.mean(window_discrete(Dt, i, width))
+
+    return s
 
 def std_window_discrete(Dt, width):
     """ Standard deviation along window
@@ -90,6 +99,16 @@ def std_window_discrete(Dt, width):
     s = np.empty(N)
     for i in range(0, N):
         s[i] = np.std(window_discrete(Dt, i, width))
+
+    return s
+
+def var_window_discrete(Dt, width):
+    """ Variance along window
+    """
+    N = len(Dt)
+    s = np.empty(N)
+    for i in range(0, N):
+        s[i] = np.var(window_discrete(Dt, i, width))
 
     return s
 

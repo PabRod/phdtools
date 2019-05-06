@@ -69,11 +69,37 @@ def test_window_discrete_nan(Dt, i, width):
     assert(np.isnan(Dt_subsetted))
 
 @pytest.mark.parametrize("Dt, width", [
+    ((1,1,1,1,3), 2)
+])
+def test_mean_window_discrete(Dt, width):
+
+    s = mean_window_discrete(Dt, width)
+    s_expected = np.array([np.nan, 1.0, 1.0, 1.0, 2.0])
+    for i in range(0, len(s)):
+        if i == 0:
+            assert(np.isnan(s[i]))
+        else:
+            assert(s[i] == s_expected[i])
+
+@pytest.mark.parametrize("Dt, width", [
     ((1,1,1,1,1), 2)
 ])
-def test_stdwindow_discrete(Dt, width):
+def test_std_window_discrete(Dt, width):
 
     s = std_window_discrete(Dt, width)
+    s_expected = np.array([np.nan, 0.0, 0.0, 0.0, 0.0])
+    for i in range(0, len(s)):
+        if i == 0:
+            assert(np.isnan(s[i]))
+        else:
+            assert(s[i] == s_expected[i])
+
+@pytest.mark.parametrize("Dt, width", [
+    ((1,1,1,1,1), 2)
+])
+def test_var_window_discrete(Dt, width):
+
+    s = var_window_discrete(Dt, width)
     s_expected = np.array([np.nan, 0.0, 0.0, 0.0, 0.0])
     for i in range(0, len(s)):
         if i == 0:
