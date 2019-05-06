@@ -251,39 +251,9 @@ class Trajectory(Detflow):
     def plotPoincareMap(self, period, t0 =0, color = 'black', s = .1, **kwargs):
         """ Plots the Poincaré map for the given period
         """
+        from phdtools.timeseries import plot_poincare
         self.solve()
-        if(self.dims == 1):
-            xs = self.sol[:,0]
-            x_sample = np.empty(len(xs))
-            x_sample[:] = np.nan
-            for i in range(0, len(x_sample)):
-                x_sample[i] = np.interp(t0 + i*period, self.ts, xs)
-
-            for i in range(0, len(x_sample)-1):
-                plt.scatter(x_sample[i], x_sample[i+1], color = color, s = s, **kwargs)
-
-            plt.xlabel('x_i')
-            plt.ylabel('x_{i+1}')
-
-        elif(self.dims == 2):
-            xs = self.sol[:, 0]
-            ys = self.sol[:, 1]
-
-            t_max = np.max(self.ts)
-            x_sample = []
-            y_sample = []
-            for i in range(0, len(xs)):
-                t_sample = t0 + i*period
-                if (t_sample < t_max):
-                    x_sample.append(np.interp(t0 + i*period, self.ts, xs))
-                    y_sample.append(np.interp(t0 + i*period, self.ts, ys))
-                else:
-                    break
-                    
-            plt.scatter(x_sample, y_sample, color = color, s = s, **kwargs)
-
-        else:
-            raise ValueError("Poincaré maps are only supported for 1 and 2 dimensional systems")
+        plot_poincare(self.sol, period, t0, self.ts, color = color, s = s, **kwargs)
 
 class stoTrajectory(Trajectory):
 

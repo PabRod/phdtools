@@ -106,6 +106,48 @@ def plot_return(ax, Dt, k = 1, marker=".", **kwargs):
 
     return ax
 
+def plot_poincare(Dt, period, t0 = 0, ts = [], color = 'black', s = .1, alpha = 0.5, **kwargs):
+    """ Plots the Poincaré map for the given period
+    """
+
+    t_max = np.max(ts)
+    dims = Dt.shape[1]
+
+    if dims == 1:
+        xs = Dt[:, 0]
+        x_sample = []
+        for i in range(0, len(xs)):
+            t_sample = t0 + i*period
+            if (t_sample < t_max):
+                x_sample.append(np.interp(t0 + i*period, ts, xs))
+            else:
+                break
+
+        for i in range(0, len(x_sample)-1):
+            plt.scatter(x_sample[i], x_sample[i+1], color = color, s = s, **kwargs)
+
+        plt.xlabel('x_i')
+        plt.ylabel('x_{i+1}')
+
+    elif dims == 2:
+        xs = Dt[:, 0]
+        ys = Dt[:, 1]
+
+        x_sample = []
+        y_sample = []
+        for i in range(0, len(xs)):
+            t_sample = t0 + i*period
+            if (t_sample < t_max):
+                x_sample.append(np.interp(t0 + i*period, ts, xs))
+                y_sample.append(np.interp(t0 + i*period, ts, ys))
+            else:
+                break
+
+        plt.scatter(x_sample, y_sample, color = color, s = s, alpha = alpha, **kwargs)
+
+    else:
+        raise ValueError('Poincaré maps only supported for 1 or 2 dimensions')
+
 def plot_autocorrelation(ax, Dt, ls, ts=[], marker=".", **kwargs):
     """ Plot several values of the autocorrelation
     """
