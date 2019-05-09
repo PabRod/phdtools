@@ -100,3 +100,16 @@ def test_rosmac(input, exp_output):
 
     assert(df == pytest.approx(exp_output, tol)), \
         'rosmac is not behaving as expected'
+
+@pytest.mark.parametrize("input, w, k, exp_output", [
+    ((0, 0), (2, 1), (0, 0), (2, 1)),
+    ((0, 3.1416/2), (4, 3), (2, 1), (6, 2))
+])
+def test_strogatz(input, w, k, exp_output):
+
+    tol = 1e-8
+
+    df = strogatz(input, t = 0, w = w, k = k)
+
+    assert(df == pytest.approx(exp_output, tol)), \
+        'strogatz is not behaving as expected'

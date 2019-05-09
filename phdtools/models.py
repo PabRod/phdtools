@@ -38,6 +38,15 @@ def duffing(state, t, g=0.2, w=1.2, a=-1, b=1, d=0.3):
             -a*x - b*x**3 - d*v + g*np.cos(w*t)]
     return dydt
 
+def strogatz(state, t=0, w=(2,1), k=(2,1)):
+    """ Strogatz coupled oscillators model
+    """
+    th1, th2 = state
+    dydt = [w[0] + k[0]*np.sin(th2 - th1),
+            w[1] + k[1]*np.sin(th1 - th2)]
+
+    return dydt
+
 def competition(y, t=0, r=1, a=1):
     """ Basic competition model
     """
