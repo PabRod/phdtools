@@ -171,7 +171,7 @@ class Detflow:
 
 class Trajectory(Detflow):
 
-    def __init__(self, f, y0, ts):
+    def __init__(self, f, y0, ts, topology = 'cartesian'):
         """ Constructor """
 
         # Invoke the __init__ of the parent class
@@ -183,6 +183,7 @@ class Trajectory(Detflow):
 
         self.y0 = y0  # Set initial conditions
         self.ts = ts  # Set time span
+        self.topology = topology # Set topology
 
         self.sol = []
 
@@ -192,6 +193,11 @@ class Trajectory(Detflow):
         if (len(self.sol) == 0):
             # Solve only if not already solved
             self.sol = odeint(self.f, self.y0, self.ts, **kwargs)
+
+            if self.topology == 'cartesian':
+                pass # Do nothing
+            if self.topology == 'torus':
+                self.sol = np.mod(self.sol, 2*np.pi)
         else:
             # Do nothing
             pass
@@ -225,7 +231,22 @@ class Trajectory(Detflow):
 
         self.solve()
 
-        plt.plot(self.ts, self.sol, **kwargs)
+        if self.topology == 'cartesian':
+            plt.plot(self.ts, self.sol, **kwargs)
+
+        elif self.topology == 'torus':
+            # When toroidal topology is used, we need to remove the jumps at 2 pi
+            #
+            # https://stackoverflow.com/questions/14357104/plot-periodic-trajectories
+
+            for i in range(0, 2):
+                abs_d_data = np.abs(np.diff(self.sol[:,i]))
+                mask = np.hstack([ abs_d_data > abs_d_data.mean()+3*abs_d_data.std(), [False]])
+                masked_data = np.ma.MaskedArray(self.sol[:,i], mask)
+
+                plt.plot(self.ts, masked_data, **kwargs)
+                plt.ylim((0, 2*np.pi))
+
         return plt
 
     def plotMaxLyapunovs(self, **kwargs):
@@ -242,7 +263,21 @@ class Trajectory(Detflow):
         self.solve()
 
         if(self.dims == 2):
-            plt.plot(self.sol[:, 0], self.sol[:, 1], **kwargs)
+
+            if self.topology == 'cartesian':
+                plt.plot(self.sol[:, 0], self.sol[:, 1], **kwargs)
+
+            elif self.topology == 'torus':
+                # When toroidal topology is used, we need to remove the jumps at 2 pi
+                #
+                # https://stackoverflow.com/questions/14357104/plot-periodic-trajectories
+                abs_d_data = np.abs(np.diff(self.sol[:,0])) + np.abs(np.diff(self.sol[:,1]))
+                mask = np.hstack([ abs_d_data > abs_d_data.mean()+3*abs_d_data.std(), [False]])
+                masked_data_x = np.ma.MaskedArray(self.sol[:,0], mask)
+                masked_data_y = np.ma.MaskedArray(self.sol[:,1], mask)
+
+                plt.plot(masked_data_x, masked_data_y, **kwargs)
+
             return plt
         else:
             # Throw exception

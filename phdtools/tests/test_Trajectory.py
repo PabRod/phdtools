@@ -26,6 +26,23 @@ def test_solve():
     tol = 1e-2
     assert(np.abs(ylast[0]) < tol) # Expected 0.0
 
+def test_solve_torus():
+
+    from phdtools.models import strogatz
+
+    y0 = [1, 2]
+    ts = np.linspace(0, 25, 300)
+
+    traj = Trajectory(strogatz, y0, ts, topology = 'torus')
+    traj.solve()
+
+    # Check the periodic boundaries
+    above_lower_bound = (traj.sol >= 0.0).all()
+    below_upper_bound = (traj.sol <= 2*np.pi).all()
+
+    assert(above_lower_bound)
+    assert(below_upper_bound)
+
 def test_maxLyapunovs():
 
     from phdtools.models import decay
