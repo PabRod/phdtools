@@ -112,6 +112,14 @@ def var_window_discrete(Dt, width):
 
     return s
 
+def lissajous(Dt, period, ts):
+    """ Generate lissajous figure for a given period
+    """
+    X = Dt
+    Y = np.sin(2*np.pi*ts/period)
+
+    return X, Y
+
 def hideJumps(series):
     """ Hides the jumps from 2 pi to 0 in periodic boundary plots, such as the torus
     """
@@ -127,6 +135,13 @@ def torify(th1, th2, r_tube = 1, r_hole = 3):
     return [(r_hole + r_tube * np.cos(th2))*np.cos(th1),
             (r_hole + r_tube * np.cos(th2))*np.sin(th1),
             r_tube * np.sin(th2)]
+
+def plot_lissajous(ax, Dt, period, ts, **kwargs):
+    """ Plots the lissajous figure
+    """
+    X, Y = lissajous(Dt, period, ts)
+
+    ax.plot(X, Y, **kwargs)
 
 def plot_return(ax, Dt, k = 1, marker=".", **kwargs):
     """ Plots signal vs delayed signal
