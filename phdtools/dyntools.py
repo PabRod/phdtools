@@ -57,6 +57,15 @@ def polarToCartesian(flow_in_polar):
 
     return flow_in_cartesian
 
+def hideJumps(series):
+    """ Hides the jumps from 2 pi to 0 in periodic boundary plots, such as the torus
+    """
+    jumps = np.abs(np.diff(series))
+    mask = np.hstack([ jumps > jumps.mean()+3*jumps.std(), [False]])
+    masked_series = np.ma.MaskedArray(series, mask)
+
+    return masked_series
+
 
 class Detflow:
     """ Deterministic flow """
@@ -240,11 +249,7 @@ class Trajectory(Detflow):
             # https://stackoverflow.com/questions/14357104/plot-periodic-trajectories
 
             for i in range(0, 2):
-                abs_d_data = np.abs(np.diff(self.sol[:,i]))
-                mask = np.hstack([ abs_d_data > abs_d_data.mean()+3*abs_d_data.std(), [False]])
-                masked_data = np.ma.MaskedArray(self.sol[:,i], mask)
-
-                plt.plot(self.ts, masked_data, **kwargs)
+                plt.plot(self.ts, hideJumps(self.sol[:,i]), **kwargs)
                 plt.ylim((0, 2*np.pi))
 
         return plt
