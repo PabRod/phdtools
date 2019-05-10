@@ -47,6 +47,14 @@ def strogatz(state, t=0, w=(2,1), k=(2,1)):
 
     return dydt
 
+def lorenz(state, t=0, a=10, b=28, c=8/3):
+    x, y, z = state
+    dydt = [a*(y - x),
+            x*(b - z) - y,
+            x*y - c*z]
+
+    return dydt
+
 def competition(y, t=0, r=1, a=1):
     """ Basic competition model
     """
