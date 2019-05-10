@@ -112,6 +112,22 @@ def var_window_discrete(Dt, width):
 
     return s
 
+def hideJumps(series):
+    """ Hides the jumps from 2 pi to 0 in periodic boundary plots, such as the torus
+    """
+    jumps = np.abs(np.diff(series))
+    mask = np.hstack([ jumps > jumps.mean()+3*jumps.std(), [False]])
+    masked_series = np.ma.MaskedArray(series, mask)
+
+    return masked_series
+
+def torify(th1, th2, r_tube = 1, r_hole = 3):
+    """ Plot two timeseries in a toroidal topology
+        http://mathworld.wolfram.com/Torus.html """
+    return [(r_hole + r_tube * np.cos(th2))*np.cos(th1),
+            (r_hole + r_tube * np.cos(th2))*np.sin(th1),
+            r_tube * np.sin(th2)]
+
 def plot_return(ax, Dt, k = 1, marker=".", **kwargs):
     """ Plots signal vs delayed signal
     """

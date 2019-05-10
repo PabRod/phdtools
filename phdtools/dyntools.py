@@ -2,6 +2,7 @@ import numpy as np
 from scipy.integrate import odeint
 import sdeint
 import matplotlib.pyplot as plt
+from phdtools.timeseries import hideJumps
 from mpl_toolkits.mplot3d import Axes3D
 
 
@@ -56,15 +57,6 @@ def polarToCartesian(flow_in_polar):
         return [vx, vy]
 
     return flow_in_cartesian
-
-def hideJumps(series):
-    """ Hides the jumps from 2 pi to 0 in periodic boundary plots, such as the torus
-    """
-    jumps = np.abs(np.diff(series))
-    mask = np.hstack([ jumps > jumps.mean()+3*jumps.std(), [False]])
-    masked_series = np.ma.MaskedArray(series, mask)
-
-    return masked_series
 
 
 class Detflow:
