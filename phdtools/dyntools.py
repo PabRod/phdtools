@@ -306,11 +306,11 @@ class Trajectory(Detflow):
 
 class stoTrajectory(Trajectory):
 
-    def __init__(self, f, G, y0, ts, method = 'EuMa'):
+    def __init__(self, f, G, y0, ts, method = 'EuMa', topology = 'cartesian'):
         """ Constructor """
 
         # Invoke the __init__ of the parent class
-        Trajectory.__init__(self, f, y0, ts)
+        Trajectory.__init__(self, f, y0, ts, topology)
 
         self.G = G # Set stochastic term
         self.y0 = y0  # Set initial conditions
@@ -339,3 +339,6 @@ class stoTrajectory(Trajectory):
         else:
             # Do nothing
             pass
+
+        if self.topology == 'torus':
+            self.sol = np.mod(self.sol, 2*np.pi)
