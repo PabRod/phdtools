@@ -126,4 +126,4 @@ def test_plotTrajectory():
     # Try to plot. Should fail
     with pytest.raises(ValueError) as excinfo:
         traj.plotTrajectory()
-    assert 'Only available for 2 dimensions' in str(excinfo.value)
+    assert 'Only available for 2 or 3 dimensions' in str(excinfo.value)

@@ -276,9 +276,26 @@ class Trajectory(Detflow):
                 plt.plot(masked_data_x, masked_data_y, **kwargs)
 
             return plt
+
+        elif(self.dims == 3):
+
+            if self.topology == 'cartesian':
+                from mpl_toolkits import mplot3d
+
+                X = self.sol[:, 0]
+                Y = self.sol[:, 1]
+                Z = self.sol[:, 2]
+
+                ax = plt.axes(projection='3d')
+                ax.plot3D(X, Y, Z, **kwargs)
+
+                return plt
+
+            else:
+                raise ValueError('3D graphs only available for cartesian topologies')
         else:
             # Throw exception
-            raise ValueError('Only available for 2 dimensions')
+            raise ValueError('Only available for 2 or 3 dimensions')
 
     def plotPoincareMap(self, period, t0 =0, color = 'black', s = .1, **kwargs):
         """ Plots the Poincaré map for the given period
