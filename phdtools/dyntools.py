@@ -2,8 +2,9 @@ import numpy as np
 from scipy.integrate import odeint
 import sdeint
 import matplotlib.pyplot as plt
-from phdtools.timeseries import hideJumps
+from phdtools.timeseries import hideJumps, torify
 from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits import mplot3d
 
 
 def stabil(model, y0, tstabil, **kwargs):
@@ -280,8 +281,6 @@ class Trajectory(Detflow):
         elif(self.dims == 3):
 
             if self.topology == 'cartesian':
-                from mpl_toolkits import mplot3d
-
                 X = self.sol[:, 0]
                 Y = self.sol[:, 1]
                 Z = self.sol[:, 2]
@@ -296,6 +295,42 @@ class Trajectory(Detflow):
         else:
             # Throw exception
             raise ValueError('Only available for 2 or 3 dimensions')
+
+    def plotToroidalTrajectory(self, ax, r_tube = 1, r_hole = 3, surf=True, **kwargs):
+
+        if self.topology == 'torus':
+            # Torify trajectory
+            rs = torify(self.sol[:,0], self.sol[:,1], r_tube, r_hole)
+            X, Y, Z = rs
+
+            # Plot trajectory
+            ax = plt.gca()
+            ax = plt.axes(projection='3d')
+            ax.plot3D(X, Y, Z, **kwargs)
+
+            if surf:
+                # Plot surface
+                th1_surf = np.linspace(0, 2*np.pi, 100)
+                th2_surf = np.linspace(0, 2*np.pi, 50)
+                th1_surf, th2_surf = np.meshgrid(th1_surf, th2_surf)
+
+                rs_surf = torify(th1_surf, th2_surf, r_tube, r_hole)
+                x_surf, y_surf, z_surf = rs_surf
+                ax.plot_surface(x_surf, y_surf, z_surf, alpha = 0.25, edgecolor = 'none', color = 'gray')
+
+                # Scale equal
+                max_range = np.array([X.max()-X.min(), Y.max()-Y.min(), Z.max()-Z.min()]).max() / 2.0
+                mid_x = (X.max()+X.min()) * 0.5
+                mid_y = (Y.max()+Y.min()) * 0.5
+                mid_z = (Z.max()+Z.min()) * 0.5
+                ax.set_xlim(mid_x - max_range, mid_x + max_range)
+                ax.set_ylim(mid_y - max_range, mid_y + max_range)
+                ax.set_zlim(mid_z - max_range, mid_z + max_range)
+
+            return ax
+
+        else:
+            raise ValueError('plotToroidalTrajectory only valid for torus topologies')
 
     def plotPoincareMap(self, period, t0 =0, color = 'black', s = .1, **kwargs):
         """ Plots the Poincaré map for the given period
