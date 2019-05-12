@@ -2,7 +2,7 @@ import numpy as np
 from scipy.integrate import odeint
 import sdeint
 import matplotlib.pyplot as plt
-from phdtools.timeseries import hideJumps, torify
+from phdtools.timeseries import *
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits import mplot3d
 
@@ -194,10 +194,10 @@ class Trajectory(Detflow):
 
         if (len(self.sol) == 0):
             # Solve only if not already solved
-            self.sol = odeint(self.f, self.y0, self.ts, **kwargs)
+            self.sol_cartesian = odeint(self.f, self.y0, self.ts, **kwargs)
 
             if self.topology == 'cartesian':
-                pass # Do nothing
+                self.sol = self.sol_cartesian
             if self.topology == 'torus':
                 self.sol = np.mod(self.sol, 2*np.pi)
         else:
@@ -361,13 +361,13 @@ class stoTrajectory(Trajectory):
         if (len(self.sol) == 0):
             # Solve only if not already solved
             if(self.method == 'EuMa'):
-                self.sol = sdeint.itoEuler(self.f, self.G, self.y0, self.ts, **kwargs)
+                self.sol_cartesian = sdeint.itoEuler(self.f, self.G, self.y0, self.ts, **kwargs)
 
             elif (self.method == 'Ito'):
-                self.sol = sdeint.itoint(self.f, self.G, self.y0, self.ts, **kwargs)
+                self.sol_cartesian = sdeint.itoint(self.f, self.G, self.y0, self.ts, **kwargs)
 
             elif (self.method == 'Strato'):
-                self.sol = sdeint.stratint(self.f, self.G, self.y0, self.ts, **kwargs)
+                self.sol_cartesian = sdeint.stratint(self.f, self.G, self.y0, self.ts, **kwargs)
 
             else:
                 raise ValueError('Only supported methods are EuMa, Ito and Strato')
@@ -375,5 +375,67 @@ class stoTrajectory(Trajectory):
             # Do nothing
             pass
 
-        if self.topology == 'torus':
-            self.sol = np.mod(self.sol, 2*np.pi)
+        if self.topology == 'cartesian':
+            self.sol = self.sol_cartesian
+        elif self.topology == 'torus':
+            self.sol = np.mod(self.sol_cartesian, 2*np.pi)
+
+class strogatzTrajectory(stoTrajectory):
+
+        def __init__(self, ws, ks, y0, ts, G, method = 'EuMa', topology = 'torus'):
+            """ Constructor """
+
+            from phdtools.models import strogatz
+            def f(state, t=0):
+                return np.array(strogatz(state, t, ws, ks))
+
+            # Invoke the __init__ of the parent class
+            stoTrajectory.__init__(self, f, G, y0, ts, method = method, topology = topology)
+
+            # Specific properties
+            self.omega = ws[0] - ws[1]
+            self.K = np.sum(ks)
+            self.delta = self.omega/self.K
+            self.isStable = (np.abs(self.delta) <= 1)
+
+        def phaseDifference(self, periodic = True):
+            """ Returns the phase phase difference
+            """
+            self.solve()
+
+            if periodic:
+                phi = np.mod(self.sol_cartesian[:,0] - self.sol_cartesian[:,1], 2*np.pi)
+            else:
+                phi = self.sol_cartesian[:,0] - self.sol_cartesian[:,1]
+
+            return phi
+
+        def effectiveFrequencies(self):
+            """ Returns the effective frequencies
+            """
+            self.solve()
+
+            w_eff = list(map(self.f, self.sol, self.ts))
+            return w_eff
+
+        def plotEquilibriumCycles(self, topology = 'cartesian', **kwargs):
+            """ Plots the stable and unstable cycle
+            """
+            if self.isStable:
+                ths1_plot = np.linspace(0, 2*np.pi, 100)
+                ths2_plot_stable = np.mod(ths1_plot - np.arcsin(self.delta), 2*np.pi)
+                ths2_plot_unstable = np.mod(ths1_plot - np.pi + np.arcsin(self.delta), 2*np.pi)
+
+                if topology == 'cartesian':
+                    plt.plot(ths1_plot, hideJumps(ths2_plot_stable), **kwargs)
+                    plt.plot(ths1_plot, hideJumps(ths2_plot_unstable), linestyle = '--', **kwargs)
+                elif topology == 'torus':
+                    ax = plt.gca()
+                    rs = torify(ths1_plot, ths2_plot_stable)
+                    X, Y, Z = rs
+                    ax.plot3D(X, Y, Z, color = 'red')
+                    rs = torify(ths1_plot, ths2_plot_unstable)
+                    X, Y, Z = rs
+                    ax.plot3D(X, Y, Z, color = 'red', linestyle = '--')
+            else:
+                pass
