@@ -382,7 +382,7 @@ class stoTrajectory(Trajectory):
 
 class strogatzTrajectory(stoTrajectory):
 
-        def __init__(self, ws, ks, y0, ts, G, method = 'EuMa', topology = 'torus'):
+        def __init__(self, ws, ks, y0, ts, G, method = 'EuMa', topology = 'torus', F = 2*np.pi/3):
             """ Constructor """
 
             from phdtools.models import strogatz
@@ -393,10 +393,46 @@ class strogatzTrajectory(stoTrajectory):
             stoTrajectory.__init__(self, f, G, y0, ts, method = method, topology = topology)
 
             # Specific properties
+            self.F = F
             self.omega = ws[0] - ws[1]
             self.K = np.sum(ks)
             self.delta = self.omega/self.K
             self.isStable = (np.abs(self.delta) <= 1)
+            self.asleep = []
+
+        def solveAsleep(self):
+            """ Generates the asleep/awake timeseries
+            """
+            self.solve()
+            self.asleep = (self.sol[:,0] <= self.F)
+
+        def plotAsleep(self, **kwargs):
+            """ Plots the asleep/awake timeseries
+            """
+            self.solveAsleep()
+            plt.plot(self.ts, self.asleep, **kwargs)
+
+        def plotRaster(self, period, density = 100, double = True, interpolation = 'nearest', cmap = 'Greys', **kwargs):
+            """ Plots the raster somnogram
+            """
+            self.solveAsleep()
+
+            t_min = self.ts.min()
+            t_max = self.ts.max()
+            N = int(np.floor((t_max - t_min)/period))
+
+            if double:
+                vals = np.empty((2*density, N))
+                for i in range(0, N):
+                    sampling_times = np.linspace(i*period, (i+2)*period, 2*density)
+                    vals[:, i] = np.interp(sampling_times, self.ts, self.asleep)
+            else:
+                vals = np.empty((density, N))
+                for i in range(0, N):
+                    sampling_times = np.linspace(i*period, (i+1)*period, density)
+                    vals[:, i] = np.interp(sampling_times, self.ts, self.asleep)
+
+            plt.imshow(np.transpose(vals), interpolation = interpolation, cmap = cmap, **kwargs)
 
         def phaseDifference(self, periodic = True):
             """ Returns the phase phase difference
