@@ -150,6 +150,26 @@ class Detflow:
 
         return plt
 
+    def plotNullclines(self, roiX, roiY, levels = [0], colors = ['b', 'r'], **kwargs):
+        """ Plots the nullclines
+        """
+        if(self.dims == 2):
+            ax = plt.gca()
+
+            X, Y = np.meshgrid(roiX, roiY)
+            dX = self.f((X, Y))[0]
+            dY = self.f((X, Y))[1]
+
+            ax.contour(X, Y, dX, levels = levels, colors = colors[0], **kwargs)
+            ax.contour(X, Y, dY, levels = levels, colors = colors[1], **kwargs)
+
+            ax.set_aspect("equal")
+            plt.legend()
+        else:
+            raise ValueError('plotNullclines only valid for 2 dimensional systems')
+
+        return plt
+
     def plotEqs(self, **kwargs):
         """ Plot the equilibria"""
 

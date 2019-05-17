@@ -53,6 +53,17 @@ def test_attractor():
     assert(2 < np.min(yattr) < 2.5)
     assert(5 < np.max(yattr) < 6)
 
+def test_plotNullclines():
+
+    from phdtools.models import lotkavolterra
+
+    flow = Detflow(lotkavolterra, 2)
+    roiX = np.linspace(0, 2, 100)
+    roiY = np.linspace(0, 2, 100)
+
+    plt = flow.plotPhase(roiX, roiY)
+    plt = flow.plotNullclines(roiX, roiY)
+
 def test_plotEqs():
 
     from phdtools.models import lotkavolterra
