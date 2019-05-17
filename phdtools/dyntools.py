@@ -412,6 +412,21 @@ class strogatzTrajectory(stoTrajectory):
             self.solveAsleep()
             plt.plot(self.ts, self.asleep, **kwargs)
 
+        def plotCircle(self, t, r = 1, curve = True, density = 100, **kwargs):
+            """ Plots the phases on a circle
+            """
+            self.solve()
+
+            if curve:
+                ths_plot = np.linspace(0, 2*np.pi, density)
+                plt.plot(r*np.cos(ths_plot), r*np.sin(ths_plot), color = 'gray', alpha = 0.4)
+
+            th_1 = np.interp(t, self.ts, self.sol[:, 0])
+            th_2 = np.interp(t, self.ts, self.sol[:, 1])
+
+            plt.scatter(r*np.cos(th_1), r*np.sin(th_1), **kwargs)
+            plt.scatter(r*np.cos(th_2), r*np.sin(th_2), **kwargs)
+
         def plotRaster(self, period, density = 100, double = True, interpolation = 'nearest', cmap = 'Greys', **kwargs):
             """ Plots the raster somnogram
             """
