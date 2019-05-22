@@ -130,3 +130,15 @@ def test_plot_approx_phas():
 
     fig, ax = plt.subplots(1,1)
     ax = plot_approx_phas(ax, Dt, ts)
+
+def test_fit():
+    
+    ## Generate fitting function
+    f = lambda t : np.sin(t + 1.4)
+
+    ## Generate datapoints
+    ts = np.linspace(-5, 5, 100)
+    ys = np.sin(ts)
+
+    optimal_delay = fit_delay(f, ts, ys)
+    assert(optimal_delay == pytest.approx(1.4))

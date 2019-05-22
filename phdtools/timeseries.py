@@ -219,3 +219,24 @@ def plot_approx_phas(ax, Dt, ts, marker='.', **kwargs):
     ax.set_ylabel('y')
 
     return ax
+
+def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14)):
+    """ Fit a set of points to a given function just by displacing it in the horizontal axis
+    """
+    def D(ys, ts, delay):
+        """ Sum of all square distances
+        """
+
+        def d(y, t):
+            """ Square distance of a single point
+            """
+            return (y - fun(t - delay))**2
+
+        distances = list(map(d, ys, ts))
+        return np.sum(distances)
+
+    from scipy.optimize import minimize_scalar
+    res = minimize_scalar(lambda delay : D(ys, ts, delay), bounds=bounds, method='bounded')
+    optimal_delay = res.x
+
+    return optimal_delay
