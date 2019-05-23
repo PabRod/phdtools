@@ -220,7 +220,7 @@ def plot_approx_phas(ax, Dt, ts, marker='.', **kwargs):
 
     return ax
 
-def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14)):
+def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14), debug = False, info = ''):
     """ Fit a set of points to a given function just by displacing it in the horizontal axis
     """
     def D(ys, ts, delay):
@@ -239,4 +239,37 @@ def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14)):
     res = minimize_scalar(lambda delay : D(ys, ts, delay), bounds=bounds, method='bounded')
     optimal_delay = res.x
 
+    if debug:
+        ## Plotting
+        delays = np.linspace(np.min(bounds), np.max(bounds), 1000)
+        Ds = list(map(lambda delay: D(ys, ts, delay), delays))
+
+        t_plot = np.linspace(np.min(ts), np.max(ts), 1000)
+        fig, axs = plt.subplots(2, 1)
+        plt.suptitle(info)
+        axs[0].plot(t_plot, fun(t_plot), label = 'Fitting function')
+        axs[0].plot(ts, ys, color = 'r', marker = '.', label = 'Original points', alpha = 0.2)
+        axs[0].plot(ts - optimal_delay, ys, color = 'g', marker = '.', label = 'Optimized points', alpha = 0.2)
+        axs[0].set_xlabel('t')
+        axs[0].set_ylabel('f(t)')
+        axs[0].legend()
+
+        axs[1].set_title('Target function')
+        axs[1].plot(delays, Ds, color = 'k')
+        axs[1].scatter(optimal_delay, D(ys, ts, optimal_delay), color = 'k')
+        # axs[1].set_xlim(axs[0].get_xlim())
+        axs[1].set_xlabel('Delay')
+        axs[1].set_ylabel('Square distance')
+
+        plt.show()
+
     return optimal_delay
+
+def periodify(f, period = 2*np.pi):
+    """ Forces a piecewise periodic function
+    """
+
+    def f_p(t):
+        return f(np.mod(t, period))
+
+    return f_p
