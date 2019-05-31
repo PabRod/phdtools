@@ -241,7 +241,7 @@ def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14), debug = False, info = ''):
 
     if debug:
         ## Plotting
-        delays = np.linspace(np.min(bounds), np.max(bounds), 1000)
+        delays = np.linspace(np.min(bounds), np.max(bounds), 250)
         Ds = list(map(lambda delay: D(ys, ts, delay), delays))
 
         t_plot = np.linspace(np.min(ts), np.max(ts), 1000)

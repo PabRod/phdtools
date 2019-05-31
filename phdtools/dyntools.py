@@ -414,11 +414,15 @@ class strogatzTrajectory(stoTrajectory):
 
             # Specific properties
             self.F = F
-            self.omega = ws[0] - ws[1]
-            self.K = np.sum(ks)
-            self.delta = self.omega/self.K
-            self.isStable = (np.abs(self.delta) <= 1)
             self.asleep = []
+            if(callable(ws)):
+                self.autonomous = False
+            else:
+                self.autonomous = True
+                self.omega = ws[0] - ws[1]
+                self.K = np.sum(ks)
+                self.delta = self.omega/self.K
+                self.isStable = (np.abs(self.delta) <= 1)
 
         def solveAsleep(self):
             """ Generates the asleep/awake timeseries

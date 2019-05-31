@@ -14,4 +14,6 @@
 
 /build
 /dist
-.Rproj.user
+/animation
+/vignettes
+*Rproj*
