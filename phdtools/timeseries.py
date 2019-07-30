@@ -234,7 +234,7 @@ def plot_approx_phas(ax, Dt, ts, marker='.', **kwargs):
 
     return ax
 
-def fit_delay(fun, ts, ys, x0 = 0, bounds = (-3.14, 3.14), method = 'bounded', debug = False, info = '', **kwargs):
+def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14), method = 'bounded', debug = False, info = '', **kwargs):
     """ Fit a set of points to a given function just by displacing it in the horizontal axis
     """
     def D(ys, ts, delay):
