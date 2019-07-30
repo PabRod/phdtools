@@ -140,5 +140,6 @@ def test_fit():
     ts = np.linspace(-5, 5, 100)
     ys = np.sin(ts - 1.4)
 
-    optimal_delay = fit_delay(f, ts, ys)
+    res = fit_delay(f, ts, ys)
+    optimal_delay = res.x
     assert(optimal_delay == pytest.approx(1.4))

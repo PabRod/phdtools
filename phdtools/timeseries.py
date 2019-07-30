@@ -112,6 +112,20 @@ def var_window_discrete(Dt, width):
 
     return s
 
+def ac_window_discrete(Dt, width, lag = 1):
+    """ Autocorrelation along window
+    """
+    N = len(Dt)
+    ac = np.empty(N)
+    for i in range(0, N):
+        x = window_discrete(Dt, i, width)
+        if np.isnan(x).any():
+            ac[i] = np.nan
+        else:
+            ac[i] = autocorrelation(x, lag)
+
+    return ac
+
 def lissajous(Dt, period, ts):
     """ Generate lissajous figure for a given period
     """
@@ -220,7 +234,7 @@ def plot_approx_phas(ax, Dt, ts, marker='.', **kwargs):
 
     return ax
 
-def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14), debug = False, info = ''):
+def fit_delay(fun, ts, ys, x0 = 0, bounds = (-3.14, 3.14), method = 'bounded', debug = False, info = '', **kwargs):
     """ Fit a set of points to a given function just by displacing it in the horizontal axis
     """
     def D(ys, ts, delay):
@@ -235,11 +249,13 @@ def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14), debug = False, info = ''):
         distances = list(map(d, ys, ts))
         return np.sum(distances)
 
-    from scipy.optimize import minimize_scalar
-    res = minimize_scalar(lambda delay : D(ys, ts, delay), bounds=bounds, method='bounded')
-    optimal_delay = res.x
+    from scipy.optimize import minimize_scalar, minimize
+    res = minimize_scalar(lambda delay : D(ys, ts, delay), bounds=bounds, method=method, **kwargs)
 
     if debug:
+        optimal_delay = res.x
+        D2 = res.fun
+
         ## Plotting
         delays = np.linspace(np.min(bounds), np.max(bounds), 250)
         Ds = list(map(lambda delay: D(ys, ts, delay), delays))
@@ -263,7 +279,9 @@ def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14), debug = False, info = ''):
 
         plt.show()
 
-    return optimal_delay
+    # res.x contains the position of the minima
+    # res.fun contains the value of the minima (f(x))
+    return res
 
 def periodify(f, period = 2*np.pi):
     """ Forces a piecewise periodic function
