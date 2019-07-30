@@ -283,6 +283,54 @@ def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14), method = 'bounded', debug = F
     # res.fun contains the value of the minima (f(x))
     return res
 
+def multi_fit_delay(f_ref, f_subsample, ts, T, N_samples=20, ts_per_sample=75, N_bounds=1):
+    """ Robustly applies the fit_delay function to a subset of points
+
+    parameters:
+    f_ref: reference function
+    f_subsample: displaced values
+    ts: sampling times
+    T: estimated period
+
+    (optional)
+    N_samples: number of partitions of ts
+    ts_per_sample: length of each time partition
+    N_bounds: number of sub-bounds to look for minima (increase to filter out non-absolute minima)
+    """
+    ts_samples = np.linspace(T, ts[-1]-T, N_samples+1) # Exclude borders
+
+    ## Create subpartitions of the bounds where the minima is going to be searched
+    #
+    # For example: (0, 3) partitioned with N_bounds = 3 yields (0, 1), (1, 2), (2, 3)
+    bounds = (0, T)
+    partitioned_bounds = np.zeros((N_bounds, 2))
+    aux_vals = np.linspace(bounds[0], bounds[1], N_bounds + 1)
+    for i in range(0, N_bounds):
+        partitioned_bounds[i, 0] = aux_vals[i]
+        partitioned_bounds[i, 1] = aux_vals[i+1]
+
+    ## Sweep in a time window
+    optimal_delay = np.nan*np.empty(N_samples)
+    for i in range(0, N_samples):
+        ts_subsample = np.linspace(ts_samples[i], ts_samples[i+1], ts_per_sample)
+        ys_subsample = f_subsample(ts_subsample)
+
+        ## The optimization method looks for local minima inside given bounds
+        delay_candidates = np.zeros(N_bounds)
+        D2s = np.zeros(N_bounds)
+        for j in range(0, N_bounds): # Use several bounds' partitions if required
+            res = fit_delay(f_ref, ts_subsample, ys_subsample, bounds = partitioned_bounds[j,:], debug = False)
+            delay_candidates[j] = res.x
+            D2s[j] = res.fun
+
+        ## Identify the absolute minimum...
+        absolute_min_index = np.argmin(D2s)
+        
+        ## ... and choose only that one
+        optimal_delay[i] = delay_candidates[absolute_min_index]
+
+    return optimal_delay
+
 def periodify(f, period = 2*np.pi):
     """ Forces a piecewise periodic function
     """
