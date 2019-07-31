@@ -283,11 +283,11 @@ def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14), method = 'bounded', debug = F
     # res.fun contains the value of the minima (f(x))
     return res
 
-def multi_fit_delay(f_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_bounds=1):
+def multi_fit_delay(y_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_bounds=1):
     """ Robustly applies the fit_delay function to a subset of points
 
     parameters:
-    f_ref: reference function
+    y_ref: reference values
     y_measured: displaced values
     ts: sampling times
     T: estimated period
@@ -298,11 +298,17 @@ def multi_fit_delay(f_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_
     N_bounds: number of sub-bounds to look for minima (increase to filter out non-absolute minima)
     """
     ## Input interpretation
-    if callable(y_measured): # The input is already a function, no need to interpolate
-        f_subsample = y_measured
+    if callable(y_ref): # The input is already a function, no need to interpolate
+        f_ref = y_ref
     else: # Turn input into callable function by interpolation
         from scipy.interpolate import interp1d
-        f_subsample = interp1d(ts, y_measured, kind = 'cubic')
+        f_ref = interp1d(ts, y_ref, kind = 'cubic')
+
+    if callable(y_measured): # The input is already a function, no need to interpolate
+        f_measured = y_measured
+    else: # Turn input into callable function by interpolation
+        from scipy.interpolate import interp1d
+        f_measured = interp1d(ts, y_measured, kind = 'cubic')
 
     ts_samples = np.linspace(T, ts[-1]-T, N_samples+1) # Exclude borders
 
@@ -320,7 +326,7 @@ def multi_fit_delay(f_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_
     optimal_delay = np.nan*np.empty(N_samples)
     for i in range(0, N_samples):
         ts_subsample = np.linspace(ts_samples[i], ts_samples[i+1], ts_per_sample)
-        ys_subsample = f_subsample(ts_subsample)
+        ys_subsample = f_measured(ts_subsample)
 
         ## The optimization method looks for local minima inside given bounds
         delay_candidates = np.zeros(N_bounds)
