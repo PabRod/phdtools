@@ -310,7 +310,7 @@ def multi_fit_delay(y_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_
         from scipy.interpolate import interp1d
         f_measured = interp1d(ts, y_measured, kind = 'cubic')
 
-    ts_samples = np.linspace(T, ts[-1]-T, N_samples+1) # Exclude borders
+    ts_samples = np.linspace(ts[0]+T, ts[-1]-T, N_samples+1) # Exclude borders
 
     ## Create subpartitions of the bounds where the minima is going to be searched
     #

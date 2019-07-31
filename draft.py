@@ -12,7 +12,7 @@ f_ref = lambda t : np.sin(t)-np.cos(2*t) # interp1d(ts, obs(reference(flow)), ki
 
 # Measured data
 ## Generated
-mode = 'data'
+mode = 'mixed'
 forced_delay = np.pi/3
 if mode == 'function':
     f_measured = lambda t : f_ref(t - forced_delay)
@@ -23,8 +23,13 @@ elif mode == 'data':
     ref_data = f_ref(ts)
     measured_data = data_gen(ts)
     optimal_delay = multi_fit_delay(ref_data, measured_data, ts, T, N_samples=20, ts_per_sample=75, N_bounds=3)
+elif mode == 'mixed':
+    data_gen = lambda t : f_ref(t - forced_delay) # Use whatever method to generate the data
+
+    measured_data = data_gen(ts)
+    optimal_delay = multi_fit_delay(f_ref, measured_data, ts, T, N_samples=20, ts_per_sample=75, N_bounds=3)
 else:
-    raise Exception('Supported modes are: data and function')
+    raise Exception('Supported modes are: data, function and mixed')
 
 print(f'mode: {mode}')
 print(optimal_delay/np.pi)
