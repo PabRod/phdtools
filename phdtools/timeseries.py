@@ -283,12 +283,12 @@ def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14), method = 'bounded', debug = F
     # res.fun contains the value of the minima (f(x))
     return res
 
-def multi_fit_delay(f_ref, f_subsample, ts, T, N_samples=20, ts_per_sample=75, N_bounds=1):
+def multi_fit_delay(f_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_bounds=1):
     """ Robustly applies the fit_delay function to a subset of points
 
     parameters:
     f_ref: reference function
-    f_subsample: displaced values
+    y_measured: displaced values
     ts: sampling times
     T: estimated period
 
@@ -297,6 +297,13 @@ def multi_fit_delay(f_ref, f_subsample, ts, T, N_samples=20, ts_per_sample=75, N
     ts_per_sample: length of each time partition
     N_bounds: number of sub-bounds to look for minima (increase to filter out non-absolute minima)
     """
+    ## Input interpretation
+    if callable(y_measured): # The input is already a function, no need to interpolate
+        f_subsample = y_measured
+    else: # Turn input into callable function by interpolation
+        from scipy.interpolate import interp1d
+        f_subsample = interp1d(ts, y_measured, kind = 'cubic')
+
     ts_samples = np.linspace(T, ts[-1]-T, N_samples+1) # Exclude borders
 
     ## Create subpartitions of the bounds where the minima is going to be searched
@@ -325,7 +332,7 @@ def multi_fit_delay(f_ref, f_subsample, ts, T, N_samples=20, ts_per_sample=75, N
 
         ## Identify the absolute minimum...
         absolute_min_index = np.argmin(D2s)
-        
+
         ## ... and choose only that one
         optimal_delay[i] = delay_candidates[absolute_min_index]
 
