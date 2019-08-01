@@ -283,7 +283,7 @@ def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14), method = 'bounded', debug = F
     # res.fun contains the value of the minima (f(x))
     return res
 
-def multi_fit_delay(y_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_bounds=1):
+def multi_fit_delay(y_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_bounds=1, debug=False):
     """ Robustly applies the fit_delay function to a subset of points
 
     parameters:
@@ -296,6 +296,7 @@ def multi_fit_delay(y_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_
     N_samples: number of partitions of ts
     ts_per_sample: length of each time partition
     N_bounds: number of sub-bounds to look for minima (increase to filter out non-absolute minima)
+    debug: True for debug mode
     """
     ## Input interpretation
     if callable(y_ref): # The input is already a function, no need to interpolate
@@ -332,7 +333,7 @@ def multi_fit_delay(y_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_
         delay_candidates = np.zeros(N_bounds)
         D2s = np.zeros(N_bounds)
         for j in range(0, N_bounds): # Use several bounds' partitions if required
-            res = fit_delay(f_ref, ts_subsample, ys_subsample, bounds = partitioned_bounds[j,:], debug = False)
+            res = fit_delay(f_ref, ts_subsample, ys_subsample, bounds = partitioned_bounds[j,:], debug = debug)
             delay_candidates[j] = res.x
             D2s[j] = res.fun
 
