@@ -345,7 +345,7 @@ def multi_fit_delay(y_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_
 
     return optimal_delay
 
-def multi_fit_delay_standalone(y_measured, ts, T, N_samples=20, ts_per_sample=75, N_bounds=1, debug=False):
+def multi_fit_delay_standalone(y_measured, ts, T, mode='first', tinit=0.0, N_samples=20, ts_per_sample=75, N_bounds=1, debug=False):
     """ Robustly applies the fit_delay function to a subset of points
 
     parameters:
@@ -359,17 +359,19 @@ def multi_fit_delay_standalone(y_measured, ts, T, N_samples=20, ts_per_sample=75
     N_bounds: number of sub-bounds to look for minima (increase to filter out non-absolute minima)
     debug: True for debug mode
     """
-    ## Use past measured data to estimate the reference
-    from scipy.interpolate import interp1d
-    y_ref = periodify(interp1d(ts, y_measured, kind = 'cubic'), T)
+    if mode=='first': ## Use first period as a reference
+        from scipy.interpolate import interp1d
+        y_ref = periodify(interp1d(ts, y_measured, kind = 'cubic'), T) # Force it to be periodic
+    else:
+        raise Exception('Only supported mode is first')
 
     return multi_fit_delay(y_ref, y_measured, ts, T, N_samples, ts_per_sample, N_bounds, debug)
 
-def periodify(f, period = 2*np.pi):
+def periodify(f, period = 2*np.pi, tinit=0.0):
     """ Forces a piecewise periodic function
     """
 
     def f_p(t):
-        return f(np.mod(t, period))
+        return f(tinit + np.mod(t, period))
 
     return f_p
