@@ -1,7 +1,7 @@
 ## Import modules
 import numpy as np
 from scipy.interpolate import interp1d
-from phdtools.timeseries import fit_delay, multi_fit_delay
+from phdtools.timeseries import *
 
 T = 2*np.pi
 N_cycles = 10
@@ -31,5 +31,9 @@ elif mode == 'mixed':
 else:
     raise Exception('Supported modes are: data, function and mixed')
 
+print(f'mode: {mode}')
+print(optimal_delay/np.pi)
+
+optimal_delay = multi_fit_delay_standalone(measured_data, ts, T, N_samples=20, ts_per_sample=75, N_bounds=2, debug=False)
 print(f'mode: {mode}')
 print(optimal_delay/np.pi)

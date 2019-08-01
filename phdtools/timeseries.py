@@ -345,6 +345,26 @@ def multi_fit_delay(y_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_
 
     return optimal_delay
 
+def multi_fit_delay_standalone(y_measured, ts, T, N_samples=20, ts_per_sample=75, N_bounds=1, debug=False):
+    """ Robustly applies the fit_delay function to a subset of points
+
+    parameters:
+    y_measured: displaced values
+    ts: sampling times
+    T: estimated period
+
+    (optional)
+    N_samples: number of partitions of ts
+    ts_per_sample: length of each time partition
+    N_bounds: number of sub-bounds to look for minima (increase to filter out non-absolute minima)
+    debug: True for debug mode
+    """
+    ## Use past measured data to estimate the reference
+    from scipy.interpolate import interp1d
+    y_ref = periodify(interp1d(ts, y_measured, kind = 'cubic'), T)
+
+    return multi_fit_delay(y_ref, y_measured, ts, T, N_samples, ts_per_sample, N_bounds, debug)
+
 def periodify(f, period = 2*np.pi):
     """ Forces a piecewise periodic function
     """
