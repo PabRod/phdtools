@@ -234,7 +234,7 @@ def plot_approx_phas(ax, Dt, ts, marker='.', **kwargs):
 
     return ax
 
-def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14), method = 'bounded', debug = False, info = '', **kwargs):
+def fit_delay(fun, ts, ys, T=2*np.pi, bounds = (-3.14, 3.14), method = 'bounded', debug = False, info = '', **kwargs):
     """ Fit a set of points to a given function just by displacing it in the horizontal axis
     """
     def D(ys, ts, delay):
@@ -260,7 +260,7 @@ def fit_delay(fun, ts, ys, bounds = (-3.14, 3.14), method = 'bounded', debug = F
         delays = np.linspace(np.min(bounds), np.max(bounds), 250)
         Ds = list(map(lambda delay: D(ys, ts, delay), delays))
 
-        t_plot = np.linspace(np.min(ts), np.max(ts), 1000)
+        t_plot = np.linspace(np.min(ts)-T, np.max(ts)+T, 1000)
         fig, axs = plt.subplots(2, 1)
         plt.suptitle(info)
         axs[0].plot(t_plot, fun(t_plot), label = 'Fitting function')
@@ -303,7 +303,7 @@ def multi_fit_delay(y_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_
         f_ref = y_ref
     else: # Turn input into callable function by interpolation
         from scipy.interpolate import interp1d
-        f_ref = interp1d(ts, y_ref, kind = 'cubic')
+        f_ref = periodify(interp1d(ts, y_ref, kind = 'cubic'), T)
 
     if callable(y_measured): # The input is already a function, no need to interpolate
         f_measured = y_measured
@@ -333,7 +333,7 @@ def multi_fit_delay(y_ref, y_measured, ts, T, N_samples=20, ts_per_sample=75, N_
         delay_candidates = np.zeros(N_bounds)
         D2s = np.zeros(N_bounds)
         for j in range(0, N_bounds): # Use several bounds' partitions if required
-            res = fit_delay(f_ref, ts_subsample, ys_subsample, bounds = partitioned_bounds[j,:], debug = debug)
+            res = fit_delay(f_ref, ts_subsample, ys_subsample, T=T, bounds=partitioned_bounds[j,:], debug=debug)
             delay_candidates[j] = res.x
             D2s[j] = res.fun
 
