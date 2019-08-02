@@ -359,19 +359,45 @@ def multi_fit_delay_standalone(y_measured, ts, T, mode='first', tinit=0.0, N_sam
     N_bounds: number of sub-bounds to look for minima (increase to filter out non-absolute minima)
     debug: True for debug mode
     """
+    from scipy.interpolate import interp1d
     if mode=='first': ## Use first period as a reference
-        from scipy.interpolate import interp1d
-        y_ref = periodify(interp1d(ts, y_measured, kind = 'cubic'), T) # Force it to be periodic
+        y_ref = periodify(interp1d(ts, y_measured, kind = 'cubic'), tinit=0.0, T=T) # Force it to be periodic
+    elif mode =='yesterday':
+        raise Exception('Work in progress')
+
+        current_day = lambda t : t // T
+        previous_day = lambda t : current_day(t)-1
+
+        all_values = interp1d(ts, y_measured, kind = 'cubic', fill_value='extrapolate')
+        y_ref = lambda t : periodify2(all_values, t, tinit=previous_day(t)*T, T=T)
+
+    elif mode=='mean':
+        raise Exception('Work in progress')
+        # y_ref_array = [periodify(interp1d(ts, y_measured, kind = 'cubic'), tinit=i*T, T=T) for i in range(0,3)]
+
+        y_ref_1 = periodify(interp1d(ts, y_measured, kind = 'cubic'), tinit=0*T, T=T) # Force it to be periodic
+        y_ref_2 = periodify(interp1d(ts, y_measured, kind = 'cubic'), tinit=1*T, T=T)
+        y_ref_3 = periodify(interp1d(ts, y_measured, kind = 'cubic'), tinit=2*T, T=T)
+        y_ref = interp1d(ts, (y_ref_1(ts) + y_ref_2(ts) + y_ref_3(ts))/3, kind = 'cubic')
     else:
         raise Exception('Only supported mode is first')
 
     return multi_fit_delay(y_ref, y_measured, ts, T, N_samples, ts_per_sample, N_bounds, debug)
 
-def periodify(f, period = 2*np.pi, tinit=0.0):
+def periodify(f, T=2*np.pi, tinit=0.0):
     """ Forces a piecewise periodic function
     """
 
     def f_p(t):
-        return f(tinit + np.mod(t, period))
+        return f(tinit + np.mod(t, T))
 
     return f_p
+
+def periodify2(f, t, T=2*np.pi, tinit=0.0):
+    """ Forces a piecewise periodic function, with explicit time dependence
+    """
+
+    def f_p(s):
+        return f(tinit + np.mod(s, T))
+
+    return f_p(t)
