@@ -44,10 +44,30 @@ def strogatz(state, t=0, w=(2,1), k=(2,1)):
     if callable(w) & callable(k):
         w = w(t)
         k = k(t)
-    
+
     th1, th2 = state
     dydt = [w[0] + k[0]*np.sin(th2 - th1),
             w[1] + k[1]*np.sin(th1 - th2)]
+
+    return dydt
+
+def dphilrob(state, t=0, tmax='default', Qmax=100*3600, theta=10, sigma=3, vmaSa=1, vvm=1.9/3600, vmv=1.9/3600, vvc=6.3, vvh=0.19, Xi=10.8, mu=1e-3, taum=10/3600, tauv=10/3600, w=2*np.pi/24, alpha=0.0):
+
+    # Define auxiliary functions
+
+    ## Saturation function
+    S = lambda V : Qmax/(1 + np.exp((theta-V)/sigma))
+
+    ## External forcing
+    if tmax == 'default':
+        C = lambda t : 0.5*(1 + np.cos(w*(t - alpha)))
+    else:
+        C = lambda t : (1 - t / tmax)*0.5*(1 + np.cos(w*(t - alpha)))
+        
+    Vv, Vm, H = state
+    dydt =[(             -vvm*S(Vm) + vvh*H - vvc*C(t)         - Vv)/tauv, # Ventro-lateral preoptic area activity
+           (-vmv*S(Vv)                     + vmaSa             - Vm)/taum, # Mono-aminergic group activity
+           (              mu*S(Vm)                             -  H)/Xi] # Homeostatic pressure
 
     return dydt
 
