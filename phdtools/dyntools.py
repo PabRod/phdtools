@@ -164,7 +164,6 @@ class Detflow:
             ax.contour(X, Y, dY, levels = levels, colors = colors[1], **kwargs)
 
             ax.set_aspect("equal")
-            plt.legend()
         else:
             raise ValueError('plotNullclines only valid for 2 dimensional systems')
 
